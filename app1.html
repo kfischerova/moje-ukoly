@@ -110,6 +110,25 @@ input:focus,select:focus{border-color:var(--prace);box-shadow:0 0 0 3px rgba(10,
 .calbtn:hover{color:var(--prace)!important}
 .done-div{font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:20px 0 8px;display:flex;align-items:center;gap:8px}
 .done-div::after{content:'';flex:1;height:1px;background:var(--border)}
+.proj-grid{display:flex;flex-direction:column;gap:10px}
+.proj-card{background:var(--card);border-radius:var(--r-lg);padding:16px 18px;box-shadow:var(--shadow);border-left:4px solid var(--prace);transition:box-shadow .15s,transform .12s;animation:panelIn .18s ease}
+.proj-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.proj-card-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px}
+.proj-card-info{flex:1;min-width:0}
+.proj-card-name{font-size:1rem;font-weight:600;letter-spacing:-.01em;margin-bottom:4px}
+.proj-card-meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.proj-card-note{font-size:.79rem;color:var(--muted);margin-top:6px;line-height:1.45;font-style:italic}
+.prog-row{display:flex;align-items:center;gap:10px;margin-top:10px}
+.prog-track{flex:1;height:4px;background:var(--bg);border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;border-radius:4px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+.prog-pct{font-size:.73rem;font-weight:600;color:var(--muted);min-width:30px;text-align:right}
+.proj-actions{display:flex;gap:4px;flex-shrink:0;opacity:0;transition:opacity .15s}
+.proj-card:hover .proj-actions{opacity:1}
+.pabtn{background:none;border:none;cursor:pointer;color:var(--muted);font-size:.88rem;padding:2px 5px;transition:color .15s;line-height:1}
+.pabtn:hover{color:var(--high)}
+.chip-status-active{background:rgba(10,132,255,.1);color:var(--prace)}
+.chip-status-paused{background:rgba(142,142,147,.1);color:var(--muted)}
+.chip-status-done{background:rgba(48,209,88,.1);color:var(--rodina)}
 .empty{background:var(--card);border-radius:var(--r-lg);text-align:center;padding:56px 20px;color:var(--muted);box-shadow:var(--shadow)}
 .empty-ico{font-size:2.6rem;margin-bottom:10px;display:block}
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:rgba(28,28,30,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);color:#fff;padding:10px 22px;border-radius:100px;font-size:.83rem;font-weight:500;opacity:0;pointer-events:none;transition:opacity .22s;z-index:9999;white-space:nowrap}
@@ -145,6 +164,10 @@ input:focus,select:focus{border-color:var(--prace);box-shadow:0 0 0 3px rgba(10,
       <div class="sb-item" onclick="sf('rodina',this)"><div class="sb-icon" style="background:rgba(48,209,88,.1)">💚</div>Rodina<span class="sb-cnt" id="c-rodina"></span></div>
       <div class="sb-item" onclick="sf('prace',this)"><div class="sb-icon" style="background:rgba(10,132,255,.1)">💙</div>Práce<span class="sb-cnt" id="c-prace"></span></div>
     </div>
+    <div class="sb-group">
+      <div class="sb-lbl">Projekty</div>
+      <div class="sb-item" onclick="sf('projekty',this)"><div class="sb-icon" style="background:rgba(94,92,230,.1)">📁</div>Všechny projekty<span class="sb-cnt" id="c-projekty"></span></div>
+    </div>
     <div class="sb-spacer"></div>
     <div class="sb-footer">
       <button class="sb-flink" onclick="toggleSP()">🔗 Sdílené pohledy</button>
@@ -154,7 +177,7 @@ input:focus,select:focus{border-color:var(--prace);box-shadow:0 0 0 3px rgba(10,
   <main class="main">
     <div class="page-hd">
       <div class="page-title" id="pageTitle">Vše</div>
-      <button class="btn-add" onclick="toggleAdd()">＋ Nový úkol</button>
+      <button class="btn-add" id="btnAdd" onclick="toggleAdd()">＋ Nový úkol</button>
     </div>
     <div class="share-panel" id="SP"><div class="sp-hd">Sdílené pohledy</div><div id="spList"></div></div>
     <div class="add-panel" id="AP">
@@ -175,6 +198,22 @@ input:focus,select:focus{border-color:var(--prace);box-shadow:0 0 0 3px rgba(10,
       </div>
       <div class="add-ft"><button class="btn btn-g" onclick="toggleAdd()">Zrušit</button><button class="btn btn-p" onclick="addTask()">Přidat</button></div>
     </div>
+    <!-- add project panel -->
+    <div class="add-panel" id="APP">
+      <div class="add-lbl">Nový projekt</div>
+      <div class="fg fg2">
+        <div class="f"><label>Název projektu</label><input type="text" id="pN" placeholder="Název projektu…"></div>
+        <div class="f"><label>Termín</label><input type="date" id="pD"></div>
+      </div>
+      <div class="fg fg2">
+        <div class="f"><label>Stav</label><select id="pS"><option value="active">▶ Aktivní</option><option value="paused">⏸ Pozastaveno</option><option value="done">✅ Dokončeno</option></select></div>
+        <div class="f"><label>Viditelnost</label><select id="pV"><option value="alex">👔 Alex vidí</option><option value="private">🔒 Soukromý</option></select></div>
+      </div>
+      <div class="fg" style="grid-template-columns:1fr">
+        <div class="f"><label>Poznámka pro Alexe</label><input type="text" id="pNote" placeholder="Krátký kontext, aktuální stav…"></div>
+      </div>
+      <div class="add-ft"><button class="btn btn-g" onclick="toggleAddProj()">Zrušit</button><button class="btn btn-p" onclick="addProject()">Přidat projekt</button></div>
+    </div>
     <div id="TL"></div>
   </main>
 </div>
@@ -184,8 +223,8 @@ const SK='ukoly_v1',SKC='contacts_v1',SKP='projects_v1';
 let tasks=[],contacts=[],projects=[],fil='all';
 
 function lC(){try{contacts=JSON.parse(localStorage.getItem(SKC)||'[]')}catch{contacts=[]}if(!contacts.length)contacts=[{id:'alex',name:'Alex',type:'work'},{id:'rodina',name:'Rodina',type:'family'}]}
-function lP(){try{projects=JSON.parse(localStorage.getItem(SKP)||'[]')}catch{projects=[]}if(!projects.length)projects=[{id:'proj_web',name:'Redesign webu'},{id:'proj_q3',name:'Q3 kampaň'}]}
-function sP(){localStorage.setItem(SKP,JSON.stringify(projects))}
+function lP(){try{projects=JSON.parse(localStorage.getItem(SKP)||'[]')}catch{projects=[]}if(!projects.length)projects=[{id:'proj_web',name:'Redesign webu',status:'active',date:'',note:'',vis:'alex',created:Date.now()-2e3},{id:'proj_q3',name:'Q3 kampaň',status:'active',date:'2026-07-01',note:'Briefujeme agenturu.',vis:'alex',created:Date.now()-1e3}]}
+function sP(){localStorage.setItem(SKP,JSON.stringify(projects));sync()}
 function lT(){try{tasks=JSON.parse(localStorage.getItem(SK)||'[]')}catch{tasks=[]}if(!tasks.length)tasks=smpl()}
 function sT(){localStorage.setItem(SK,JSON.stringify(tasks));sync()}
 
@@ -205,7 +244,9 @@ function sync(){
   contacts.forEach(c=>{
     const sh=tasks.filter(t=>t.share===c.id),pm={};
     sh.forEach(t=>{const k=t.projId||'__none__';if(!pm[k])pm[k]=[];pm[k].push(t);});
-    localStorage.setItem('shared_'+c.id,JSON.stringify({tasks:sh,projMap:pm,projects,updatedAt:new Date().toISOString(),owner:'Katka'}));
+    // Alex always sees all projects (even empty ones) if vis=alex
+    const sharedProjs=c.id==='alex'?projects.filter(p=>p.vis==='alex'||!p.vis):projects.filter(p=>p.vis===c.id);
+    localStorage.setItem('shared_'+c.id,JSON.stringify({tasks:sh,projMap:pm,projects:sharedProjs,updatedAt:new Date().toISOString(),owner:'Katka'}));
   });
 }
 
@@ -222,8 +263,19 @@ function pn(id){if(!id)return null;const p=projects.find(p=>p.id===id);return p?
 function cn(id){if(!id||id==='private')return null;const c=contacts.find(c=>c.id===id);return c?c.name:id}
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2300)}
 
-const ftitles={all:'Vše',today:'Dnes',overdue:'Po termínu',osobni:'Osobní',rodina:'Rodina',prace:'Práce'};
-function sf(f,el){fil=f;document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));if(el)el.classList.add('active');document.getElementById('pageTitle').textContent=ftitles[f]||f;render()}
+const ftitles={all:'Vše',today:'Dnes',overdue:'Po termínu',osobni:'Osobní',rodina:'Rodina',prace:'Práce',projekty:'Projekty'};
+function sf(f,el){
+  fil=f;
+  document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
+  if(el)el.classList.add('active');
+  document.getElementById('pageTitle').textContent=ftitles[f]||f;
+  const isProj=f==='projekty';
+  document.getElementById('btnAdd').textContent=isProj?'＋ Nový projekt':'＋ Nový úkol';
+  document.getElementById('btnAdd').onclick=isProj?toggleAddProj:toggleAdd;
+  document.getElementById('AP').classList.remove('open');
+  document.getElementById('APP').classList.remove('open');
+  render();
+}
 
 function gf(){
   let l=[...tasks];
@@ -242,19 +294,69 @@ function uc(){
   document.getElementById('c-osobni').textContent=a.filter(t=>t.cat==='osobni').length||'';
   document.getElementById('c-rodina').textContent=a.filter(t=>t.cat==='rodina').length||'';
   document.getElementById('c-prace').textContent=a.filter(t=>t.cat==='prace').length||'';
+  document.getElementById('c-projekty').textContent=projects.length||'';
 }
 
 const catL={osobni:'Osobní',rodina:'Rodina',prace:'Práce'};
 const prioL={high:'Vysoká',mid:'Střední',low:'Nízká'};
+const statusL={active:'▶ Aktivní',paused:'⏸ Pozastaveno',done:'✅ Dokončeno'};
 
 function render(){
-  uc();const l=gf(),c=document.getElementById('TL');
+  uc();
+  if(fil==='projekty'){renderProjects();return;}
+  const l=gf(),c=document.getElementById('TL');
   if(!l.length){c.innerHTML='<div class="empty"><span class="empty-ico">✨</span>Žádné úkoly v tomto pohledu.</div>';return}
   const active=l.filter(t=>!t.done),done=l.filter(t=>t.done);
   let h='';
   if(active.length)h+=`<div class="task-group">${active.map(rc).join('')}</div>`;
   if(done.length)h+=`<div class="done-div">Splněno (${done.length})</div><div class="task-group">${done.map(rc).join('')}</div>`;
   c.innerHTML=h;
+}
+
+function getPct(projId){
+  const pt=tasks.filter(t=>t.projId===projId);
+  if(!pt.length)return null;
+  return Math.round(pt.filter(t=>t.done).length/pt.length*100);
+}
+
+function renderProjects(){
+  const c=document.getElementById('TL');
+  if(!projects.length){c.innerHTML='<div class="empty"><span class="empty-ico">📁</span>Zatím žádné projekty.</div>';return}
+  const active=projects.filter(p=>p.status!=='done'),done=projects.filter(p=>p.status==='done');
+  let h='<div class="proj-grid">';
+  active.forEach(p=>h+=renderProjCard(p));
+  h+='</div>';
+  if(done.length){
+    h+=`<div class="done-div">Dokončeno (${done.length})</div><div class="proj-grid">`;
+    done.forEach(p=>h+=renderProjCard(p));
+    h+='</div>';
+  }
+  c.innerHTML=h;
+}
+
+function renderProjCard(p){
+  const pct=getPct(p.id);
+  const taskCount=tasks.filter(t=>t.projId===p.id&&!t.done).length;
+  const fillColor=pct===100?'var(--rodina)':pct>=50?'var(--mid)':'var(--prace)';
+  const ds2=ds(p.date),dc=ds2==='ov'?' ov':ds2==='td'?' td':'';
+  return`<div class="proj-card">
+    <div class="proj-card-top">
+      <div class="proj-card-info">
+        <div class="proj-card-name">${esc(p.name)}</div>
+        <div class="proj-card-meta">
+          <span class="chip chip-status-${p.status}">${statusL[p.status]||'Aktivní'}</span>
+          ${p.vis==='alex'?'<span class="chip c-share">🔗 Alex</span>':'<span class="chip c-priv">🔒 Soukromý</span>'}
+          ${p.date?`<span class="tdate${dc}">${fd(p.date)}</span>`:''}
+          ${taskCount>0?`<span class="chip c-prace">${taskCount} úkolů</span>`:''}
+        </div>
+        ${p.note?`<div class="proj-card-note">${esc(p.note)}</div>`:''}
+      </div>
+      <div class="proj-actions">
+        <button class="pabtn" onclick="delProj('${p.id}')" title="Smazat">×</button>
+      </div>
+    </div>
+    ${pct!==null?`<div class="prog-row"><div class="prog-track"><div class="prog-fill" style="width:${pct}%;background:${fillColor}"></div></div><span class="prog-pct">${pct}%</span></div>`:''}
+  </div>`;
 }
 
 function rc(t){
@@ -283,7 +385,17 @@ function rc(t){
 function tog(id){const t=tasks.find(t=>t.id===id);if(!t)return;t.done=!t.done;if(t.done)toast('✓ Splněno');sT();render()}
 function del(id){tasks=tasks.filter(t=>t.id!==id);sT();render();toast('Smazáno')}
 
-function toggleAdd(){const p=document.getElementById('AP');p.classList.toggle('open');if(p.classList.contains('open'))document.getElementById('aT').focus()}
+function toggleAdd(){const p=document.getElementById('AP');p.classList.toggle('open');document.getElementById('APP').classList.remove('open');if(p.classList.contains('open'))document.getElementById('aT').focus()}
+function toggleAddProj(){const p=document.getElementById('APP');p.classList.toggle('open');document.getElementById('AP').classList.remove('open');if(p.classList.contains('open'))document.getElementById('pN').focus()}
+
+function addProject(){
+  const name=document.getElementById('pN').value.trim();if(!name)return;
+  const p={id:'proj_'+Date.now(),name,status:document.getElementById('pS').value,date:document.getElementById('pD').value,note:document.getElementById('pNote').value.trim(),vis:document.getElementById('pV').value,created:Date.now()};
+  projects.unshift(p);sP();ppS();
+  document.getElementById('pN').value='';document.getElementById('pD').value='';document.getElementById('pNote').value='';
+  document.getElementById('APP').classList.remove('open');render();toast('📁 Projekt přidán');
+}
+function delProj(id){projects=projects.filter(p=>p.id!==id);sP();ppS();render();toast('Projekt smazán')}
 
 function onCat(){
   const cat=document.getElementById('aC').value,PR=document.getElementById('PR'),SR=document.getElementById('SR'),ss=document.getElementById('aSh');
