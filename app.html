@@ -105,6 +105,9 @@ input:focus,select:focus{border-color:var(--prace);box-shadow:0 0 0 3px rgba(10,
 .xbtn{background:none;border:none;cursor:pointer;color:transparent;font-size:1.05rem;padding:2px 4px;transition:color .15s;flex-shrink:0;line-height:1}
 .task-card:hover .xbtn{color:var(--muted)}
 .xbtn:hover{color:var(--high)!important}
+.calbtn{background:none;border:none;cursor:pointer;color:transparent;font-size:.9rem;padding:2px 4px;transition:color .15s;flex-shrink:0;line-height:1;text-decoration:none}
+.task-card:hover .calbtn{color:var(--muted)}
+.calbtn:hover{color:var(--prace)!important}
 .done-div{font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:20px 0 8px;display:flex;align-items:center;gap:8px}
 .done-div::after{content:'';flex:1;height:1px;background:var(--border)}
 .empty{background:var(--card);border-radius:var(--r-lg);text-align:center;padding:56px 20px;color:var(--muted);box-shadow:var(--shadow)}
@@ -272,6 +275,7 @@ function rc(t){
         ${sch}
       </div>
     </div>
+    ${t.date?`<button class="calbtn" onclick="exportIcs(${t.id})" title="Přidat do kalendáře">📅</button>`:''}
     <button class="xbtn" onclick="del(${t.id})">×</button>
   </div>`;
 }
@@ -327,6 +331,38 @@ function cpLink(cid){cpTxt(location.href.replace('app.html','dashboard.html')+'#
 function cpTxt(txt){
   if(navigator.clipboard)navigator.clipboard.writeText(txt).then(()=>toast('📋 Zkopírováno'));
   else{const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('📋 Zkopírováno')}
+}
+
+function exportIcs(id){
+  const t=tasks.find(t=>t.id===id);if(!t||!t.date)return;
+  const dt=t.date.replace(/-/g,'');
+  let dtStart,dtEnd;
+  if(t.time){
+    const[h,m]=t.time.split(':');
+    const pad=n=>String(n).padStart(2,'0');
+    dtStart=dt+'T'+pad(h)+pad(m)+'00';
+    dtEnd=dt+'T'+pad(Number(h)+1)+pad(m)+'00';
+  } else {
+    dtStart=dt;dtEnd=dt;
+  }
+  const uid=`ukoly-${t.id}@kfischerova`;
+  const now=new Date().toISOString().replace(/[-:.]/g,'').slice(0,15)+'Z';
+  const allDay=!t.time;
+  const ics=[
+    'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Ukoly//CS',
+    'BEGIN:VEVENT',
+    `UID:${uid}`,`DTSTAMP:${now}`,
+    allDay?`DTSTART;VALUE=DATE:${dtStart}`:`DTSTART:${dtStart}`,
+    allDay?`DTEND;VALUE=DATE:${dtEnd}`:`DTEND:${dtEnd}`,
+    `SUMMARY:${t.title}`,
+    `DESCRIPTION:Kategorie: ${catL[t.cat]} | Priorita: ${prioL[t.prio]}`,
+    'END:VEVENT','END:VCALENDAR'
+  ].join('\r\n');
+  const blob=new Blob([ics],{type:'text/calendar'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=t.title.replace(/[^a-z0-9]/gi,'_').slice(0,40)+'.ics';
+  a.click();URL.revokeObjectURL(a.href);
+  toast('📅 Exportováno do kalendáře');
 }
 
 if('Notification'in window&&Notification.permission==='default')setTimeout(()=>Notification.requestPermission(),2e3);
