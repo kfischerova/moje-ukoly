@@ -2,7 +2,11 @@
 <html lang="cs">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Úkoly">
+<meta name="theme-color" content="#F2F2F7">
 <title>Úkoly</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -133,22 +137,50 @@ input:focus,select:focus{border-color:var(--prace);box-shadow:0 0 0 3px rgba(10,
 .empty-ico{font-size:2.6rem;margin-bottom:10px;display:block}
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:rgba(28,28,30,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);color:#fff;padding:10px 22px;border-radius:100px;font-size:.83rem;font-weight:500;opacity:0;pointer-events:none;transition:opacity .22s;z-index:9999;white-space:nowrap}
 .toast.show{opacity:1}
-.mob-bar{display:none;background:rgba(255,255,255,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:14px 20px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.mob-bar{display:none;background:rgba(242,242,247,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:12px 16px;padding-top:max(12px,env(safe-area-inset-top));align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
 .mob-logo{font-size:1.05rem;font-weight:700}
-.mob-menu{background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--ink)}
+.mob-menu{background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--ink);padding:4px 8px}
+/* bottom nav for mobile */
+.mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(242,242,247,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);padding:8px 0;padding-bottom:max(8px,env(safe-area-inset-bottom));flex-direction:row;justify-content:space-around}
+.mob-nav-btn{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;font-family:inherit;font-size:.62rem;font-weight:500;color:var(--muted);cursor:pointer;padding:4px 12px;min-width:56px;transition:color .15s}
+.mob-nav-btn.active{color:var(--prace)}
+.mob-nav-btn span{font-size:1.3rem;line-height:1}
 @media(max-width:700px){
-  .sidebar{display:none;position:fixed;top:0;left:0;height:100vh;z-index:200;width:270px;box-shadow:var(--shadow-md)}
+  .sidebar{display:none;position:fixed;top:0;left:0;height:100vh;z-index:200;width:82%;max-width:300px;box-shadow:var(--shadow-md)}
   .sidebar.open{display:flex}
   .mob-bar{display:flex}
-  .main{padding:20px 16px}
+  .mob-nav{display:flex}
+  .main{padding:16px 14px;padding-bottom:80px}
+  .page-hd{margin-bottom:16px}
+  .page-title{font-size:1.5rem}
+  .btn-add{padding:8px 14px;font-size:.82rem}
+  .task-card{padding:12px 14px}
+  .ttl{font-size:.9rem}
+  .chip{font-size:.68rem;padding:2px 7px}
+  .add-panel{padding:16px 14px}
+  .fg2{grid-template-columns:1fr}
+  .fg3{grid-template-columns:1fr 1fr}
+  input[type=text],input[type=date],input[type=time],select{font-size:16px;padding:10px 12px}
+  .add-ft{flex-direction:row}
+  .btn{padding:10px 18px;font-size:.87rem}
+  .proj-card{padding:14px}
+  .task-check,.chk{width:24px;height:24px}
+  .chk.on::after{font-size:13px}
+  /* always show delete/cal buttons on mobile */
+  .proj-actions{opacity:1}
+  .xbtn,.calbtn{opacity:1;color:var(--muted)}
+  .share-panel{padding:14px}
 }
 </style>
 </head>
 <body>
 <div class="mob-bar">
   <span class="mob-logo">Úkoly</span>
-  <button class="mob-menu" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+  <button class="mob-menu" onclick="document.querySelector('.sidebar').classList.toggle('open');document.getElementById('sbo').classList.toggle('show')">☰</button>
 </div>
+<!-- sidebar overlay -->
+<div id="sbo" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:199" onclick="document.querySelector('.sidebar').classList.remove('open');this.style.display='none'"></div>
+<style>#sbo.show{display:block!important}</style>
 <div class="layout">
   <nav class="sidebar">
     <div class="sb-logo">Úkoly<span>osobní centrum</span></div>
@@ -217,6 +249,13 @@ input:focus,select:focus{border-color:var(--prace);box-shadow:0 0 0 3px rgba(10,
     <div id="TL"></div>
   </main>
 </div>
+<nav class="mob-nav">
+  <button class="mob-nav-btn active" id="mbn-all" onclick="sf('all',null);mobNav('all')"><span>📋</span>Vše</button>
+  <button class="mob-nav-btn" id="mbn-today" onclick="sf('today',null);mobNav('today')"><span>☀️</span>Dnes</button>
+  <button class="mob-nav-btn" id="mbn-prace" onclick="sf('prace',null);mobNav('prace')"><span>💙</span>Práce</button>
+  <button class="mob-nav-btn" id="mbn-projekty" onclick="sf('projekty',null);mobNav('projekty')"><span>📁</span>Projekty</button>
+  <button class="mob-nav-btn" id="mbn-add" onclick="toggleAdd()"><span>＋</span>Nový</button>
+</nav>
 <div class="toast" id="toast"></div>
 <script>
 const SK='ukoly_v1',SKC='contacts_v1',SKP='projects_v1';
@@ -264,6 +303,12 @@ function cn(id){if(!id||id==='private')return null;const c=contacts.find(c=>c.id
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2300)}
 
 const ftitles={all:'Vše',today:'Dnes',overdue:'Po termínu',osobni:'Osobní',rodina:'Rodina',prace:'Práce',projekty:'Projekty'};
+function mobNav(f){
+  document.querySelectorAll('.mob-nav-btn').forEach(b=>b.classList.remove('active'));
+  const el=document.getElementById('mbn-'+f);
+  if(el)el.classList.add('active');
+}
+
 function sf(f,el){
   fil=f;
   document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
@@ -274,6 +319,9 @@ function sf(f,el){
   document.getElementById('btnAdd').onclick=isProj?toggleAddProj:toggleAdd;
   document.getElementById('AP').classList.remove('open');
   document.getElementById('APP').classList.remove('open');
+  // close sidebar on mobile
+  document.querySelector('.sidebar').classList.remove('open');
+  document.getElementById('sbo').classList.remove('show');
   render();
 }
 
