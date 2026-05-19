@@ -4,309 +4,241 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,500;0,700;1,300&family=Epilogue:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0D1117;--card:#161B22;--card2:#1C2330;--card3:#21262D;
-  --ink:#F0F6FC;--muted:#7D8590;--border:#30363D;
-  --sage:#3FB950;--sage-d:#1A4526;
-  --amber:#D29922;--amber-d:#3D2F0C;
-  --rose:#F85149;--rose-d:#3D1414;
-  --sky:#58A6FF;--sky-d:#0D2840;
-  --purple:#BC8CFF;--purple-d:#1E1535;
-  --shadow:0 1px 8px rgba(0,0,0,.3);--shadow-md:0 4px 24px rgba(0,0,0,.4);
-  --r:12px;
+  --bg:#F2F2F7;--card:#FFFFFF;--card2:#F2F2F7;--card3:#E5E5EA;
+  --ink:#1C1C1E;--ink2:#3A3A3C;--muted:#8E8E93;--border:rgba(60,60,67,.12);
+  --sage:#30D158;--sage-l:rgba(48,209,88,.1);
+  --amber:#FF9F0A;--amber-l:rgba(255,159,10,.1);
+  --rose:#FF3B30;--rose-l:rgba(255,59,48,.1);
+  --sky:#0A84FF;--sky-l:rgba(10,132,255,.1);
+  --r:13px;--r-lg:18px;
+  --shadow:0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 16px rgba(0,0,0,.08),0 2px 6px rgba(0,0,0,.04);
 }
-body{font-family:'Epilogue',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:36px 20px}
-.wrap{max-width:860px;margin:0 auto}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:48px 24px 60px;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:760px;margin:0 auto}
 
 /* header */
-.top{margin-bottom:36px}
-.top-row{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px}
-h1{font-family:'Fraunces',serif;font-size:2.2rem;font-weight:500;letter-spacing:-.03em;line-height:1;color:var(--ink)}
-h1 span{font-style:italic;font-weight:300;color:var(--muted)}
-.meta{font-size:.77rem;color:var(--muted);display:flex;gap:16px;flex-wrap:wrap;align-items:center}
-.refresh-btn{background:var(--card2);color:var(--ink);border:1px solid var(--border);border-radius:8px;padding:6px 14px;font-family:'Epilogue',sans-serif;font-size:.78rem;cursor:pointer;transition:background .15s}
-.refresh-btn:hover{background:var(--border)}
+.hd{margin-bottom:40px}
+.hd-row{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+h1{font-size:2.1rem;font-weight:700;letter-spacing:-.03em;line-height:1}
+h1 span{font-weight:300;color:var(--muted)}
+.hd-meta{font-size:.76rem;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap}
+.ref-btn{background:var(--card);border:1px solid var(--border);border-radius:100px;padding:6px 16px;font-family:inherit;font-size:.78rem;font-weight:500;color:var(--ink2);cursor:pointer;box-shadow:var(--shadow);transition:box-shadow .15s,transform .1s}
+.ref-btn:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
 
 /* summary */
-.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:32px}
-.sum-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;position:relative;overflow:hidden}
-.sum-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:3px 3px 0 0}
-.sum-card.c1::before{background:linear-gradient(90deg,var(--sky),#388bfd)}
-.sum-card.c2::before{background:linear-gradient(90deg,var(--amber),#e3b341)}
-.sum-card.c3::before{background:linear-gradient(90deg,var(--sage),#2ea043)}
-.sum-card.c4::before{background:linear-gradient(90deg,var(--rose),#da3633)}
-.sum-num{font-family:'Fraunces',serif;font-size:2rem;font-weight:700;color:var(--ink);line-height:1;margin-bottom:3px}
-.sum-lbl{font-size:.72rem;color:var(--muted);font-weight:500;letter-spacing:.04em;text-transform:uppercase}
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:36px}
+@media(max-width:560px){.summary{grid-template-columns:repeat(2,1fr)}}
+.sum{background:var(--card);border-radius:var(--r-lg);padding:18px 16px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.sum::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;border-radius:0 0 var(--r-lg) var(--r-lg)}
+.sum.s1::after{background:var(--sky)}
+.sum.s2::after{background:var(--sage)}
+.sum.s3::after{background:var(--amber)}
+.sum.s4::after{background:var(--rose)}
+.sum-n{font-size:2rem;font-weight:700;line-height:1;margin-bottom:3px;letter-spacing:-.02em}
+.sum-l{font-size:.72rem;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
 
 /* section */
-.section{margin-bottom:36px}
-.section-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
-.section-title{font-family:'Fraunces',serif;font-size:1.15rem;font-weight:500;color:var(--ink)}
-.section-count{font-size:.75rem;background:var(--card3);border:1px solid var(--border);border-radius:100px;padding:2px 10px;color:var(--muted);font-weight:600}
+.sec{margin-bottom:32px}
+.sec-hd{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.sec-title{font-size:1.1rem;font-weight:600;letter-spacing:-.01em}
+.sec-n{font-size:.75rem;font-weight:600;background:var(--card3);border-radius:100px;padding:2px 9px;color:var(--muted)}
 
-/* project block (for Alex) */
-.proj-block{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:14px;transition:box-shadow .18s;animation:fadeUp .22s ease}
-.proj-block:hover{box-shadow:var(--shadow-md)}
-@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.proj-head{display:flex;align-items:center;gap:12px;padding:16px 18px 10px;cursor:pointer;user-select:none}
-.proj-stripe{width:4px;height:38px;border-radius:4px;flex-shrink:0}
-.proj-info{flex:1}
-.proj-name{font-family:'Fraunces',serif;font-size:1.05rem;font-weight:500;color:var(--ink);margin-bottom:3px}
-.proj-sub{font-size:.75rem;color:var(--muted);display:flex;gap:10px;align-items:center}
-.prog-wrap{padding:0 18px 12px 34px;display:flex;align-items:center;gap:10px}
-.prog-bar{flex:1;height:5px;background:var(--border);border-radius:4px;overflow:hidden}
+/* project block */
+.pb{background:var(--card);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden;margin-bottom:10px;transition:box-shadow .15s;animation:up .22s ease}
+.pb:hover{box-shadow:var(--shadow-md)}
+@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.pb-head{display:flex;align-items:center;gap:12px;padding:16px 18px 10px;cursor:pointer;user-select:none}
+.pb-bar{width:4px;height:36px;border-radius:4px;flex-shrink:0}
+.pb-info{flex:1}
+.pb-name{font-size:1rem;font-weight:600;letter-spacing:-.01em;margin-bottom:3px}
+.pb-sub{font-size:.73rem;color:var(--muted)}
+.pb-pct{font-size:1.4rem;font-weight:700;letter-spacing:-.02em;flex-shrink:0}
+.chev{font-size:.8rem;color:var(--muted);flex-shrink:0}
+.prog{padding:0 18px 12px 34px;display:flex;align-items:center;gap:10px}
+.prog-track{flex:1;height:4px;background:var(--card3);border-radius:4px;overflow:hidden}
 .prog-fill{height:100%;border-radius:4px;transition:width .7s cubic-bezier(.4,0,.2,1)}
-.pct-lbl{font-size:.75rem;font-weight:600;color:var(--muted);min-width:36px;text-align:right}
-.proj-body{padding:0 18px 16px 34px;border-top:1px solid var(--border);padding-top:12px;display:none}
-.proj-body.open{display:block}
-.chevron{color:var(--muted);font-size:.82rem;flex-shrink:0}
+.prog-pct{font-size:.73rem;font-weight:600;color:var(--muted);min-width:32px;text-align:right}
+.pb-body{padding:0 18px 16px 34px;border-top:1px solid var(--border);padding-top:12px;display:none}
+.pb-body.open{display:block}
+.sub-lbl{font-size:.69rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
 
-/* task rows */
-.task-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--card3)}
-.task-row:last-child{border-bottom:none}
-.t-check{width:16px;height:16px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center}
-.t-check.done{background:var(--sage-d);border-color:var(--sage)}
-.t-check.done::after{content:'✓';color:var(--sage);font-size:9px}
-.t-name{flex:1;font-size:.84rem;color:var(--ink)}
-.t-name.done-txt{text-decoration:line-through;color:var(--muted)}
-.t-date{font-size:.72rem;color:var(--muted)}
-.t-date.overdue{color:var(--rose);font-weight:600}
-.t-date.today{color:var(--amber);font-weight:600}
-.t-prio{font-size:.69rem;font-weight:600;padding:1px 7px;border-radius:5px}
-.t-prio-high{background:var(--rose-d);color:var(--rose)}
-.t-prio-mid{background:var(--amber-d);color:var(--amber)}
-.t-prio-low{background:var(--sage-d);color:var(--sage)}
+/* task rows in project */
+.tr{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(60,60,67,.06)}
+.tr:last-child{border-bottom:none}
+.tr-chk{width:16px;height:16px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.tr-chk.done{background:rgba(48,209,88,.15);border-color:var(--sage)}
+.tr-chk.done::after{content:'✓';color:var(--sage);font-size:9px;font-weight:700}
+.tr-name{flex:1;font-size:.84rem;font-weight:500}
+.tr-name.done{text-decoration:line-through;color:var(--muted)}
+.tr-date{font-size:.71rem;color:var(--muted)}
+.tr-date.ov{color:var(--rose);font-weight:600}
+.tr-date.td{color:var(--amber);font-weight:600}
+.chip{display:inline-flex;align-items:center;font-size:.69rem;font-weight:500;border-radius:100px;padding:2px 8px;white-space:nowrap}
+.c-high{background:rgba(255,59,48,.1);color:var(--rose)}
+.c-mid{background:rgba(255,159,10,.1);color:var(--amber)}
+.c-low{background:rgba(48,209,88,.1);color:var(--sage)}
 
-/* simple task cards (for family) */
-.task-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:13px 16px;display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;animation:fadeUp .2s ease;transition:box-shadow .18s}
-.task-card:hover{box-shadow:var(--shadow-md)}
-.task-card.done{opacity:.45}
-.task-card.done .tc-title{text-decoration:line-through}
-.tc-check{width:18px;height:18px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center}
-.tc-check.done{background:var(--sage-d);border-color:var(--sage)}
-.tc-check.done::after{content:'✓';color:var(--sage);font-size:10px}
-.tc-body{flex:1;min-width:0}
-.tc-title{font-size:.9rem;font-weight:500;margin-bottom:4px}
-.tc-meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-.tag{font-size:.69rem;font-weight:600;border-radius:6px;padding:2px 8px;white-space:nowrap}
-.tag-high{background:var(--rose-d);color:var(--rose)}
-.tag-mid{background:var(--amber-d);color:var(--amber)}
-.tag-low{background:var(--sage-d);color:var(--sage)}
-.tc-date{font-size:.72rem;color:var(--muted)}
-.tc-date.overdue{color:var(--rose);font-weight:600}
-.tc-date.today{color:var(--amber);font-weight:600}
+/* family task cards */
+.fc{background:var(--card);border-radius:var(--r-lg);padding:14px 16px;display:flex;align-items:flex-start;gap:12px;margin-bottom:8px;box-shadow:var(--shadow);transition:box-shadow .15s;animation:up .18s ease}
+.fc:hover{box-shadow:var(--shadow-md)}
+.fc.done{opacity:.38}
+.fc.done .fc-title{text-decoration:line-through;color:var(--muted)}
+.fc-chk{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center}
+.fc-chk.done{background:rgba(48,209,88,.12);border-color:var(--sage)}
+.fc-chk.done::after{content:'✓';color:var(--sage);font-size:11px;font-weight:700}
+.fc-body{flex:1;min-width:0}
+.fc-title{font-size:.91rem;font-weight:500;margin-bottom:5px;line-height:1.35}
+.fc-meta{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.fc-date{font-size:.73rem;color:var(--muted)}
+.fc-date.ov{color:var(--rose);font-weight:600}
+.fc-date.td{color:var(--amber);font-weight:600}
 
-/* fill colors */
+/* progress fill colors */
 .fill-0{background:var(--card3)}
-.fill-low{background:#5a3e1b}
-.fill-mid{background:var(--amber)}
-.fill-high{background:var(--sage)}
-.fill-done{background:var(--sage)}
+.fill-lo{background:rgba(255,159,10,.5)}
+.fill-mi{background:var(--amber)}
+.fill-hi{background:var(--sage)}
+.fill-dn{background:var(--sage)}
 
-/* no data */
-.no-data{text-align:center;padding:64px 20px;color:var(--muted)}
-.no-data-icon{font-size:3rem;margin-bottom:12px}
-
-/* loading */
-.loading{text-align:center;padding:60px;color:var(--muted)}
-.spinner{width:30px;height:30px;border:3px solid var(--border);border-top-color:var(--sky);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 14px}
+/* no data / loading */
+.nd{text-align:center;padding:72px 20px;color:var(--muted)}
+.nd-ico{font-size:3rem;margin-bottom:14px;display:block}
+.ld{text-align:center;padding:60px}
+.spin{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--sky);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 14px}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* done divider */
+.ddiv{font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:16px 0 8px;display:flex;align-items:center;gap:8px}
+.ddiv::after{content:'';flex:1;height:1px;background:var(--border)}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="top">
-    <div class="top-row">
-      <h1 id="dashTitle">Dashboard <span>načítám…</span></h1>
-      <button class="refresh-btn" onclick="load()">↻ Obnovit</button>
+  <div class="hd">
+    <div class="hd-row">
+      <h1 id="title">Dashboard <span>—</span></h1>
+      <button class="ref-btn" onclick="load()">↻ Obnovit</button>
     </div>
-    <div class="meta">
-      <span id="updatedLbl">—</span>
-      <span id="ownerLbl"></span>
-    </div>
+    <div class="hd-meta"><span id="upd">Načítám…</span><span id="own"></span></div>
   </div>
-
-  <div class="summary" id="summary"></div>
-  <div id="content"><div class="loading"><div class="spinner"></div>Načítám…</div></div>
+  <div class="summary" id="sum"></div>
+  <div id="content"><div class="ld"><div class="spin"></div>Načítám…</div></div>
 </div>
-
 <script>
-const viewerId = location.hash.replace('#','') || null;
-const openBlocks = new Set();
+const vid=location.hash.replace('#','')||null;
+const openB=new Set();
 
-function dateStatus(d){
-  if(!d)return null;const t=new Date();t.setHours(0,0,0,0);const dt=new Date(d);dt.setHours(0,0,0,0);
-  return dt<t?'overdue':dt.getTime()===t.getTime()?'today':'future';
-}
-function fmtDate(d){
-  if(!d)return '';const t=new Date();t.setHours(0,0,0,0);const dt=new Date(d);dt.setHours(0,0,0,0);
-  const diff=Math.round((dt-t)/86400000);
-  if(diff===0)return 'Dnes';if(diff===1)return 'Zítra';if(diff<0)return `${Math.abs(diff)}d zpět`;
+function ds(d){if(!d)return null;const t=new Date();t.setHours(0,0,0,0);const dt=new Date(d);dt.setHours(0,0,0,0);return dt<t?'ov':dt.getTime()===t.getTime()?'td':'fut'}
+function fd(d){
+  if(!d)return'';const t=new Date();t.setHours(0,0,0,0);const dt=new Date(d);dt.setHours(0,0,0,0);
+  const df=Math.round((dt-t)/86400000);
+  if(df===0)return'Dnes';if(df===1)return'Zítra';if(df<0)return`${Math.abs(df)}d zpět`;
   return dt.toLocaleDateString('cs-CZ',{day:'numeric',month:'short'});
 }
-function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function getPct(tasks){
-  if(!tasks||!tasks.length)return 0;
-  return Math.round(tasks.filter(t=>t.done).length/tasks.length*100);
-}
-function fillClass(p){return p===100?'fill-done':p>=60?'fill-high':p>=30?'fill-mid':p>0?'fill-low':'fill-0';}
-function prioStripe(p){return p==='high'?'var(--rose)':p==='mid'?'var(--amber)':'var(--sage)';}
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function pct(tasks){if(!tasks||!tasks.length)return 0;return Math.round(tasks.filter(t=>t.done).length/tasks.length*100)}
+function fc(p){return p===100?'fill-dn':p>=60?'fill-hi':p>=30?'fill-mi':p>0?'fill-lo':'fill-0'}
+function pc(p){return p==='high'?'var(--rose)':p==='mid'?'var(--amber)':'var(--sage)'}
 
 function load(){
   let data=null;
-  if(viewerId){
-    try{const r=localStorage.getItem('shared_'+viewerId);if(r)data=JSON.parse(r);}catch{}
-  }
-  if(!data){
-    // try any shared_ key
-    for(let i=0;i<localStorage.length;i++){
-      const k=localStorage.key(i);
-      if(k&&k.startsWith('shared_')){try{data=JSON.parse(localStorage.getItem(k));break;}catch{}}
-    }
-  }
-  if(!data){renderNoData();return;}
-  renderDashboard(data);
+  if(vid){try{const r=localStorage.getItem('shared_'+vid);if(r)data=JSON.parse(r)}catch{}}
+  if(!data){for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('shared_')){try{data=JSON.parse(localStorage.getItem(k));break}catch{}}}}
+  if(!data){noData();return}
+  render(data);
 }
 
-function renderNoData(){
-  document.getElementById('dashTitle').innerHTML='Dashboard <span>—</span>';
-  document.getElementById('content').innerHTML=`<div class="no-data">
-    <div class="no-data-icon">📭</div>
-    <p>Data zatím nejsou k dispozici.</p>
-    <p style="margin-top:8px;font-size:.8rem;color:var(--muted)">Požádej kolegyni o aktualizaci nebo zkontroluj odkaz.</p>
-  </div>`;
+function noData(){
+  document.getElementById('title').innerHTML='Dashboard <span>—</span>';
+  document.getElementById('content').innerHTML=`<div class="nd"><span class="nd-ico">📭</span><p style="font-size:.9rem;font-weight:500">Data zatím nejsou k dispozici.</p><p style="font-size:.8rem;margin-top:6px">Zkontroluj odkaz nebo požádej o aktualizaci.</p></div>`;
 }
 
-function renderDashboard(data){
-  const isAlex=viewerId==='alex'||(!viewerId&&data.projMap);
+function render(data){
+  const isAlex=vid==='alex'||(!vid&&data.projMap);
   const name=isAlex?'Alex':'Rodina';
-  const owner=data.owner||'Katka';
-  const updated=data.updatedAt?new Date(data.updatedAt).toLocaleString('cs-CZ'):'—';
-
-  document.getElementById('dashTitle').innerHTML=`Přehled <span>— ${name}</span>`;
-  document.getElementById('updatedLbl').textContent='Aktualizováno: '+updated;
-  document.getElementById('ownerLbl').textContent='Sdílí: '+owner;
+  document.getElementById('title').innerHTML=`Přehled <span>— ${name}</span>`;
+  document.getElementById('upd').textContent='Aktualizováno: '+(data.updatedAt?new Date(data.updatedAt).toLocaleString('cs-CZ'):'—');
+  document.getElementById('own').textContent=data.owner?'Sdílí: '+data.owner:'';
 
   const tasks=data.tasks||[];
-  const active=tasks.filter(t=>!t.done).length;
-  const done=tasks.filter(t=>t.done).length;
-  const overdue=tasks.filter(t=>!t.done&&dateStatus(t.date)==='overdue').length;
-  const today=tasks.filter(t=>!t.done&&dateStatus(t.date)==='today').length;
-
-  document.getElementById('summary').innerHTML=`
-    <div class="sum-card c1"><div class="sum-num">${active}</div><div class="sum-lbl">Aktivních</div></div>
-    <div class="sum-card c3"><div class="sum-num">${done}</div><div class="sum-lbl">Splněno</div></div>
-    <div class="sum-card c2"><div class="sum-num">${today}</div><div class="sum-lbl">Dnes</div></div>
-    <div class="sum-card c4"><div class="sum-num">${overdue}</div><div class="sum-lbl">Po termínu</div></div>
+  const active=tasks.filter(t=>!t.done).length,done=tasks.filter(t=>t.done).length;
+  const overdue=tasks.filter(t=>!t.done&&ds(t.date)==='ov').length,today=tasks.filter(t=>!t.done&&ds(t.date)==='td').length;
+  document.getElementById('sum').innerHTML=`
+    <div class="sum s1"><div class="sum-n">${active}</div><div class="sum-l">Aktivních</div></div>
+    <div class="sum s2"><div class="sum-n">${done}</div><div class="sum-l">Splněno</div></div>
+    <div class="sum s3"><div class="sum-n">${today}</div><div class="sum-l">Dnes</div></div>
+    <div class="sum s4"><div class="sum-n">${overdue}</div><div class="sum-l">Po termínu</div></div>
   `;
-
-  if(isAlex) renderAlexView(data);
-  else renderFamilyView(data);
+  if(isAlex)renderAlex(data);else renderFamily(data);
 }
 
-// ── Alex: grouped by project ──────────────────────────────────────────────────
-function renderAlexView(data){
-  const tasks=data.tasks||[];
-  const projects=data.projects||[];
+function renderAlex(data){
+  const tasks=data.tasks||[],projects=data.projects||[];
   let html='';
-
-  // group tasks by project
-  const projGroups={};
-  tasks.forEach(t=>{
-    const key=t.projId||'__none__';
-    if(!projGroups[key])projGroups[key]=[];
-    projGroups[key].push(t);
-  });
-
-  // projects with tasks first
   projects.forEach(p=>{
-    const ptasks=projGroups[p.id]||[];
-    if(!ptasks.length)return;
-    const pct=getPct(ptasks);
-    const isOpen=openBlocks.has(p.id);
-    const taskRows=ptasks.map(t=>{
-      const ds=dateStatus(t.date),dc=ds==='overdue'?' overdue':ds==='today'?' today':'';
-      return `<div class="task-row">
-        <div class="t-check${t.done?' done':''}"></div>
-        <span class="t-name${t.done?' done-txt':''}">${esc(t.title)}</span>
-        <span class="t-prio t-prio-${t.prio}">${t.prio==='high'?'Vysoká':t.prio==='mid'?'Střední':'Nízká'}</span>
-        ${t.date?`<span class="t-date${dc}">${fmtDate(t.date)}</span>`:''}
-      </div>`;
+    const pt=(data.projMap&&data.projMap[p.id])||tasks.filter(t=>t.projId===p.id);
+    if(!pt.length)return;
+    const pp=pct(pt),isO=openB.has(p.id);
+    const rows=pt.map(t=>{
+      const s=ds(t.date),dc=s==='ov'?' ov':s==='td'?' td':'';
+      return`<div class="tr"><div class="tr-chk${t.done?' done':''}"></div><span class="tr-name${t.done?' done':''}">${esc(t.title)}</span><span class="chip c-${t.prio}">${t.prio==='high'?'Vysoká':t.prio==='mid'?'Střední':'Nízká'}</span>${t.date?`<span class="tr-date${dc}">${fd(t.date)}</span>`:''}</div>`;
     }).join('');
-    html+=`<div class="proj-block" data-pid="${p.id}">
-      <div class="proj-head" onclick="toggleBlock('${p.id}')">
-        <div class="proj-stripe" style="background:${pct===100?'var(--sage)':pct>=50?'var(--amber)':'var(--sky)'}"></div>
-        <div class="proj-info">
-          <div class="proj-name">${esc(p.name)}</div>
-          <div class="proj-sub">${ptasks.filter(t=>!t.done).length} zbývá · ${ptasks.filter(t=>t.done).length} splněno</div>
-        </div>
-        <span class="chevron">${isOpen?'▲':'▼'}</span>
+    html+=`<div class="pb" data-pid="${p.id}">
+      <div class="pb-head" onclick="togB('${p.id}')">
+        <div class="pb-bar" style="background:${pp===100?'var(--sage)':pp>=50?'var(--amber)':'var(--sky)'}"></div>
+        <div class="pb-info"><div class="pb-name">${esc(p.name)}</div><div class="pb-sub">${pt.filter(t=>!t.done).length} zbývá · ${pt.filter(t=>t.done).length} splněno</div></div>
+        <div class="pb-pct" style="color:${pp===100?'var(--sage)':pp>=50?'var(--amber)':'var(--ink)'}">${pp}%</div>
+        <div class="chev">${isO?'▲':'▼'}</div>
       </div>
-      <div class="prog-wrap">
-        <div class="prog-bar"><div class="prog-fill ${fillClass(pct)}" style="width:${pct}%"></div></div>
-        <span class="pct-lbl">${pct}%</span>
-      </div>
-      <div class="proj-body${isOpen?' open':''}"><div>${taskRows}</div></div>
+      <div class="prog"><div class="prog-track"><div class="prog-fill ${fc(pp)}" style="width:${pp}%"></div></div></div>
+      <div class="pb-body${isO?' open':''}"><div class="sub-lbl">Úkoly</div>${rows}</div>
     </div>`;
   });
-
-  // tasks without project
-  const loose=projGroups['__none__']||[];
+  const loose=(data.projMap&&data.projMap['__none__'])||tasks.filter(t=>!t.projId);
   if(loose.length){
-    html+=`<div style="margin-bottom:14px">
-      <div class="section-header"><div class="section-title" style="font-size:.95rem;font-family:'Epilogue'">Ostatní úkoly</div></div>
-      ${loose.map(t=>{
-        const ds=dateStatus(t.date),dc=ds==='overdue'?' overdue':ds==='today'?' today':'';
-        return `<div class="task-row" style="background:var(--card);border-radius:8px;padding:8px 12px;margin-bottom:6px;border:1px solid var(--border)">
-          <div class="t-check${t.done?' done':''}"></div>
-          <span class="t-name${t.done?' done-txt':''}">${esc(t.title)}</span>
-          <span class="t-prio t-prio-${t.prio}">${t.prio==='high'?'Vysoká':t.prio==='mid'?'Střední':'Nízká'}</span>
-          ${t.date?`<span class="t-date${dc}">${fmtDate(t.date)}</span>`:''}
-        </div>`;
-      }).join('')}
-    </div>`;
+    html+=`<div class="sec"><div class="sec-hd"><div class="sec-title" style="font-size:.95rem">Ostatní</div><span class="sec-n">${loose.length}</span></div>`;
+    html+=`<div style="background:var(--card);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden;padding:0 16px">`;
+    html+=loose.map(t=>{const s=ds(t.date),dc=s==='ov'?' ov':s==='td'?' td':'';return`<div class="tr"><div class="tr-chk${t.done?' done':''}"></div><span class="tr-name${t.done?' done':''}">${esc(t.title)}</span><span class="chip c-${t.prio}">${t.prio==='high'?'Vysoká':t.prio==='mid'?'Střední':'Nízká'}</span>${t.date?`<span class="tr-date${dc}">${fd(t.date)}</span>`:''}</div>`;}).join('');
+    html+=`</div></div>`;
   }
-
-  document.getElementById('content').innerHTML=html||'<div class="no-data"><div class="no-data-icon">✨</div>Žádné sdílené úkoly.</div>';
+  document.getElementById('content').innerHTML=html||`<div class="nd"><span class="nd-ico">✨</span>Žádné sdílené úkoly.</div>`;
 }
 
-// ── Family: simple list ───────────────────────────────────────────────────────
-function renderFamilyView(data){
+function renderFamily(data){
   const tasks=data.tasks||[];
-  if(!tasks.length){
-    document.getElementById('content').innerHTML='<div class="no-data"><div class="no-data-icon">🌿</div>Žádné sdílené úkoly.</div>';
-    return;
-  }
-  const active=tasks.filter(t=>!t.done);
-  const done=tasks.filter(t=>t.done);
-  let html=active.map(renderFamilyTask).join('');
-  if(done.length) html+=`<div style="font-size:.7rem;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:20px 0 8px">Splněno</div>`+done.map(renderFamilyTask).join('');
-  document.getElementById('content').innerHTML=html;
+  if(!tasks.length){document.getElementById('content').innerHTML=`<div class="nd"><span class="nd-ico">🌿</span>Žádné sdílené úkoly.</div>`;return}
+  const active=tasks.filter(t=>!t.done),done=tasks.filter(t=>t.done);
+  let h=`<div class="sec"><div class="sec-hd"><div class="sec-title">Úkoly</div><span class="sec-n">${active.length}</span></div>`;
+  h+=active.map(fcard).join('');
+  if(done.length)h+=`<div class="ddiv">Splněno (${done.length})</div>`+done.map(fcard).join('');
+  h+=`</div>`;
+  document.getElementById('content').innerHTML=h;
 }
-function renderFamilyTask(t){
-  const ds=dateStatus(t.date),dc=ds==='overdue'?' overdue':ds==='today'?' today':'';
-  return `<div class="task-card${t.done?' done':''}">
-    <div class="tc-check${t.done?' done':''}"></div>
-    <div class="tc-body">
-      <div class="tc-title">${esc(t.title)}</div>
-      <div class="tc-meta">
-        <span class="tag tag-${t.prio}">${t.prio==='high'?'🔴 Vysoká':t.prio==='mid'?'🟡 Střední':'🟢 Nízká'}</span>
-        ${t.date?`<span class="tc-date${dc}">${fmtDate(t.date)}</span>`:''}
+
+function fcard(t){
+  const s=ds(t.date),dc=s==='ov'?' ov':s==='td'?' td':'';
+  return`<div class="fc${t.done?' done':''}">
+    <div class="fc-chk${t.done?' done':''}"></div>
+    <div class="fc-body">
+      <div class="fc-title">${esc(t.title)}</div>
+      <div class="fc-meta">
+        <span class="chip c-${t.prio}">${t.prio==='high'?'🔴 Vysoká':t.prio==='mid'?'🟡 Střední':'🟢 Nízká'}</span>
+        ${t.date?`<span class="fc-date${dc}">${fd(t.date)}</span>`:''}
       </div>
     </div>
   </div>`;
 }
 
-function toggleBlock(id){
-  if(openBlocks.has(id))openBlocks.delete(id);else openBlocks.add(id);
-  // re-render just chevrons and bodies without full reload
-  document.querySelectorAll('.proj-block').forEach(el=>{
+function togB(id){
+  if(openB.has(id))openB.delete(id);else openB.add(id);
+  document.querySelectorAll('.pb').forEach(el=>{
     const pid=el.dataset.pid;
-    el.querySelector('.proj-body').classList.toggle('open',openBlocks.has(pid));
-    el.querySelector('.chevron').textContent=openBlocks.has(pid)?'▲':'▼';
+    el.querySelector('.pb-body').classList.toggle('open',openB.has(pid));
+    el.querySelector('.chev').textContent=openB.has(pid)?'▲':'▼';
   });
 }
 

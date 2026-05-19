@@ -3,600 +3,334 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Moje úkoly</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,500;0,600;1,300&family=Epilogue:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>Úkoly</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#F5F2ED;--card:#FFFFFF;--card2:#F0EDE7;
-  --ink:#18160F;--muted:#9A9288;--border:#E3DDD5;
-  --osobni:#C17A54;--osobni-l:#F6EAE0;
-  --rodina:#4F8A5F;--rodina-l:#E3F0E7;
-  --prace:#3D6B9E;--prace-l:#E0EAF5;
-  --high:#C94040;--high-l:#FAEAEA;
-  --mid:#C07A18;--mid-l:#FDF1DC;
-  --low:#4F8A5F;--low-l:#E3F0E7;
-  --shadow:0 1px 6px rgba(24,22,15,.07);
-  --shadow-md:0 4px 20px rgba(24,22,15,.11);
-  --r:13px;
+  --bg:#F2F2F7;--card:#FFFFFF;--card2:#F2F2F7;
+  --ink:#1C1C1E;--ink2:#3A3A3C;--muted:#8E8E93;--border:rgba(60,60,67,.12);
+  --osobni:#FF6B35;--rodina:#30D158;--prace:#0A84FF;
+  --high:#FF3B30;--mid:#FF9F0A;--low:#30D158;
+  --r:13px;--r-lg:18px;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 16px rgba(0,0,0,.08),0 2px 6px rgba(0,0,0,.04);
 }
-body{font-family:'Epilogue',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:0}
-
-/* layout */
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;}
 .layout{display:flex;min-height:100vh}
-.sidebar{width:220px;flex-shrink:0;background:var(--card);border-right:1px solid var(--border);padding:28px 0;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
-.main{flex:1;padding:32px 28px;max-width:900px}
-
-/* sidebar */
-.sb-logo{font-family:'Fraunces',serif;font-size:1.25rem;font-weight:600;padding:0 20px 24px;border-bottom:1px solid var(--border);margin-bottom:16px;line-height:1.2}
-.sb-logo em{font-style:italic;font-weight:300;color:var(--muted);display:block;font-size:.85rem}
-.sb-section{font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:10px 20px 6px}
-.sb-item{display:flex;align-items:center;gap:9px;padding:8px 20px;cursor:pointer;font-size:.85rem;font-weight:500;color:var(--muted);border-left:3px solid transparent;transition:all .15s;user-select:none}
-.sb-item:hover{background:var(--bg);color:var(--ink)}
-.sb-item.active{color:var(--ink);background:var(--bg);border-left-color:var(--ink)}
-.sb-item.active.cat-osobni{border-left-color:var(--osobni);color:var(--osobni)}
-.sb-item.active.cat-rodina{border-left-color:var(--rodina);color:var(--rodina)}
-.sb-item.active.cat-prace{border-left-color:var(--prace);color:var(--prace)}
-.sb-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
-.sb-count{margin-left:auto;font-size:.72rem;background:var(--border);border-radius:100px;padding:1px 7px;color:var(--muted);font-weight:600}
+.sidebar{width:256px;flex-shrink:0;background:rgba(255,255,255,.75);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-right:1px solid var(--border);padding:20px 0 24px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.main{flex:1;padding:40px 32px;max-width:780px}
+.sb-logo{padding:4px 20px 20px;font-size:1.3rem;font-weight:700;letter-spacing:-.02em;border-bottom:1px solid var(--border);margin-bottom:8px}
+.sb-logo span{display:block;font-size:.7rem;font-weight:400;color:var(--muted);margin-top:2px;letter-spacing:0}
+.sb-group{padding:4px 0}
+.sb-lbl{font-size:.67rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);padding:10px 20px 4px}
+.sb-item{display:flex;align-items:center;gap:10px;padding:8px 20px;cursor:pointer;font-size:.87rem;font-weight:500;color:var(--ink2);transition:background .1s;user-select:none}
+.sb-item:hover{background:rgba(0,0,0,.04)}
+.sb-item.active{color:var(--ink);background:rgba(0,0,0,.05);font-weight:600}
+.sb-icon{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0}
+.sb-cnt{margin-left:auto;font-size:.74rem;font-weight:600;color:var(--muted)}
 .sb-spacer{flex:1}
-.sb-links{padding:12px 20px;border-top:1px solid var(--border)}
-.sb-link{font-size:.76rem;color:var(--muted);display:block;margin-bottom:4px;text-decoration:none;transition:color .15s}
-.sb-link:hover{color:var(--ink)}
-
-/* header */
-.page-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
-.page-title{font-family:'Fraunces',serif;font-size:1.8rem;font-weight:500;letter-spacing:-.02em;line-height:1}
-.page-title em{font-style:italic;font-weight:300;color:var(--muted)}
-
-/* add button */
-.btn-new{background:var(--ink);color:#fff;border:none;border-radius:9px;padding:9px 20px;font-family:'Epilogue',sans-serif;font-size:.84rem;font-weight:500;cursor:pointer;transition:opacity .15s,transform .12s;display:flex;align-items:center;gap:6px}
-.btn-new:hover{opacity:.85;transform:translateY(-1px)}
-
+.sb-footer{padding:14px 20px 0;border-top:1px solid var(--border)}
+.sb-flink{display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--muted);cursor:pointer;padding:7px 0;background:none;border:none;font-family:inherit;width:100%;text-align:left;transition:color .15s}
+.sb-flink:hover{color:var(--ink)}
+/* main */
+.page-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;gap:12px}
+.page-title{font-size:1.85rem;font-weight:700;letter-spacing:-.03em}
+.btn-add{background:var(--prace);color:#fff;border:none;border-radius:100px;padding:8px 18px;font-size:.85rem;font-weight:600;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:5px;transition:opacity .15s,transform .12s;box-shadow:0 2px 8px rgba(10,132,255,.3)}
+.btn-add:hover{opacity:.88;transform:translateY(-1px)}
+.btn-add:active{transform:scale(.97)}
 /* add panel */
-.add-panel{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:22px;display:none;animation:slideDown .18s ease}
+.add-panel{background:var(--card);border-radius:var(--r-lg);padding:20px;margin-bottom:20px;box-shadow:var(--shadow-md);display:none;animation:panelIn .18s ease}
 .add-panel.open{display:block}
-@keyframes slideDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
-.add-panel h3{font-family:'Fraunces',serif;font-size:1rem;font-weight:500;margin-bottom:14px;color:var(--muted)}
-.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
-.field-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px}
-@media(max-width:640px){.field-grid,.field-grid-3{grid-template-columns:1fr}}
-.field{display:flex;flex-direction:column;gap:4px}
-.field label{font-size:.7rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
-input[type=text],input[type=date],input[type=time],select,textarea{
-  border:1.5px solid var(--border);background:var(--card2);border-radius:8px;
-  padding:7px 11px;font-family:'Epilogue',sans-serif;font-size:.84rem;color:var(--ink);
-  outline:none;width:100%;transition:border-color .15s
-}
-input:focus,select:focus,textarea:focus{border-color:var(--ink)}
-textarea{resize:vertical;min-height:56px}
-.add-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
-.btn{border:none;cursor:pointer;font-family:'Epilogue',sans-serif;font-weight:500;border-radius:8px;transition:opacity .15s,transform .12s;padding:7px 16px;font-size:.82rem}
-.btn:hover{opacity:.85}
-.btn-primary{background:var(--ink);color:#fff}
-.btn-ghost{background:var(--card2);color:var(--muted)}
-
-/* sharing row */
-.share-row{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;display:none}
-.share-row.show{display:flex}
-.share-row label{font-size:.72rem;font-weight:600;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;white-space:nowrap}
-.share-row select{flex:1;min-width:140px}
-.share-hint{font-size:.75rem;color:var(--muted);flex-basis:100%}
-
-/* project row */
+@keyframes panelIn{from{opacity:0;transform:translateY(-6px) scale(.99)}to{opacity:1;transform:none}}
+.add-lbl{font-size:.72rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px}
+.fg{display:grid;gap:10px;margin-bottom:10px}
+.fg2{grid-template-columns:1fr 1fr}
+.fg3{grid-template-columns:1fr 1fr 1fr}
+@media(max-width:580px){.fg2,.fg3{grid-template-columns:1fr}}
+.f{display:flex;flex-direction:column;gap:4px}
+.f label{font-size:.71rem;font-weight:500;color:var(--muted)}
+input[type=text],input[type=date],input[type=time],select{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-family:inherit;font-size:.87rem;color:var(--ink);outline:none;width:100%;transition:border-color .15s,box-shadow .15s;-webkit-appearance:none}
+input:focus,select:focus{border-color:var(--prace);box-shadow:0 0 0 3px rgba(10,132,255,.1)}
 .proj-row{display:none;margin-bottom:10px}
-.proj-row.show{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-@media(max-width:640px){.proj-row.show{grid-template-columns:1fr}}
-
-/* tasks list */
-.tasks{display:flex;flex-direction:column;gap:8px}
-
-/* task card */
-.task-card{background:var(--card);border-radius:var(--r);padding:14px 16px;display:flex;align-items:flex-start;gap:12px;box-shadow:var(--shadow);border-left:4px solid transparent;transition:box-shadow .18s,transform .14s;animation:fadeUp .2s ease;position:relative}
-@keyframes fadeUp{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
-.task-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
-.task-card.done{opacity:.45}
-.task-card.done .task-title{text-decoration:line-through}
-.task-card[data-cat=osobni]{border-left-color:var(--osobni)}
-.task-card[data-cat=rodina]{border-left-color:var(--rodina)}
-.task-card[data-cat=prace]{border-left-color:var(--prace)}
-
-.task-check{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;cursor:pointer;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .15s}
-.task-check.checked{background:var(--rodina);border-color:var(--rodina)}
-.task-check.checked::after{content:'✓';color:#fff;font-size:11px}
-
-.task-body{flex:1;min-width:0}
-.task-title{font-size:.92rem;font-weight:500;margin-bottom:5px;line-height:1.35}
-.task-meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-
-.tag{font-size:.69rem;font-weight:600;border-radius:6px;padding:2px 8px;letter-spacing:.02em;white-space:nowrap}
-.tag-osobni{background:var(--osobni-l);color:var(--osobni)}
-.tag-rodina{background:var(--rodina-l);color:var(--rodina)}
-.tag-prace{background:var(--prace-l);color:var(--prace)}
-.tag-high{background:var(--high-l);color:var(--high)}
-.tag-mid{background:var(--mid-l);color:var(--mid)}
-.tag-low{background:var(--low-l);color:var(--low)}
-.tag-proj{background:#EEE8FF;color:#6B4FAE}
-.tag-share{background:#E8F4FF;color:#2D6FAE;display:flex;align-items:center;gap:3px}
-.tag-private{background:var(--card2);color:var(--muted)}
-
-.task-date{font-size:.73rem;color:var(--muted)}
-.task-date.overdue{color:var(--high);font-weight:600}
-.task-date.today{color:var(--mid);font-weight:600}
-
-.task-actions{display:flex;gap:4px;flex-shrink:0;opacity:0;transition:opacity .15s}
-.task-card:hover .task-actions{opacity:1}
-.act-btn{background:none;border:none;cursor:pointer;color:var(--muted);font-size:.95rem;padding:2px 4px;transition:color .15s;line-height:1}
-.act-btn:hover{color:var(--high)}
-.act-share{color:var(--prace-l)}
-.act-share:hover{color:var(--prace) !important}
-
-/* share badge with copy */
-.share-badge{cursor:pointer;transition:background .15s}
-.share-badge:hover{background:#C8E0F5}
-
-/* section label */
-.section-lbl{font-size:.7rem;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:20px 0 8px;display:flex;align-items:center;gap:8px}
-.section-lbl::after{content:'';flex:1;height:1px;background:var(--border)}
-
-/* empty */
-.empty{text-align:center;padding:48px 20px;color:var(--muted);font-size:.88rem}
-.empty-icon{font-size:2.5rem;margin-bottom:10px}
-
+.proj-row.on{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:580px){.proj-row.on{grid-template-columns:1fr}}
+.share-row{display:none;margin-bottom:10px;flex-direction:column;gap:5px}
+.share-row.on{display:flex}
+.share-hint{font-size:.74rem;color:var(--muted);padding-left:1px}
+.add-ft{display:flex;justify-content:flex-end;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+.btn{border:none;cursor:pointer;font-family:inherit;font-weight:600;border-radius:10px;padding:8px 18px;font-size:.84rem;transition:opacity .15s,transform .1s}
+.btn:hover{opacity:.85}
+.btn:active{transform:scale(.97)}
+.btn-p{background:var(--prace);color:#fff;box-shadow:0 2px 8px rgba(10,132,255,.22)}
+.btn-g{background:var(--bg);color:var(--muted)}
 /* share panel */
-.share-panel{background:var(--prace-l);border:1.5px solid #C0D8F0;border-radius:var(--r);padding:14px 18px;margin-bottom:20px;display:none}
-.share-panel.show{display:block}
-.share-panel-title{font-size:.78rem;font-weight:600;color:var(--prace);margin-bottom:10px;display:flex;align-items:center;gap:6px}
-.share-list{display:flex;flex-direction:column;gap:8px}
-.share-item{display:flex;align-items:center;gap:10px;background:#fff;border-radius:8px;padding:8px 12px;flex-wrap:wrap}
-.share-item-name{font-size:.83rem;font-weight:500;flex:1}
-.share-url-txt{font-size:.74rem;color:var(--prace);font-family:monospace;background:#EEF5FC;padding:3px 8px;border-radius:5px;flex:2;min-width:160px;word-break:break-all}
-.btn-copy-sm{background:var(--prace);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:.72rem;cursor:pointer;font-family:'Epilogue',sans-serif;white-space:nowrap;transition:opacity .15s}
-.btn-copy-sm:hover{opacity:.85}
-
-/* toast */
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 24px;border-radius:100px;font-size:.83rem;opacity:0;pointer-events:none;transition:opacity .3s;z-index:9999;white-space:nowrap}
+.share-panel{background:var(--card);border-radius:var(--r-lg);padding:16px 18px;margin-bottom:20px;box-shadow:var(--shadow);display:none}
+.share-panel.on{display:block}
+.sp-hd{font-size:.72rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px}
+.sp-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.sp-row:last-child{border-bottom:none;padding-bottom:0}
+.sp-name{font-size:.86rem;font-weight:500;min-width:80px}
+.sp-url{flex:1;font-size:.73rem;color:var(--muted);font-family:'SF Mono',ui-monospace,monospace;background:var(--bg);border-radius:8px;padding:5px 9px;word-break:break-all;min-width:140px}
+.btn-cp{background:var(--prace);color:#fff;border:none;border-radius:8px;padding:5px 12px;font-size:.74rem;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap;transition:opacity .15s}
+.btn-cp:hover{opacity:.85}
+/* tasks */
+.task-group{background:var(--card);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow);margin-bottom:10px}
+.task-card{display:flex;align-items:flex-start;gap:12px;padding:13px 16px;border-bottom:1px solid var(--border);transition:background .1s;animation:tIn .16s ease;position:relative}
+.task-card:last-child{border-bottom:none}
+.task-card:hover{background:rgba(0,0,0,.015)}
+.task-card.done{opacity:.4}
+.task-card.done .ttl{text-decoration:line-through;color:var(--muted)}
+@keyframes tIn{from{opacity:0;transform:translateX(-3px)}to{opacity:1;transform:none}}
+.chk{width:22px;height:22px;border-radius:50%;flex-shrink:0;border:2px solid var(--border);cursor:pointer;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .15s;background:transparent}
+.chk:hover{border-color:var(--prace)}
+.chk.on{background:var(--rodina);border-color:var(--rodina)}
+.chk.on::after{content:'✓';color:#fff;font-size:12px;font-weight:700}
+.tbody{flex:1;min-width:0}
+.ttl{font-size:.91rem;font-weight:500;color:var(--ink);margin-bottom:5px;line-height:1.35}
+.meta{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.chip{display:inline-flex;align-items:center;font-size:.71rem;font-weight:500;border-radius:100px;padding:2px 9px;white-space:nowrap}
+.c-osobni{background:rgba(255,107,53,.12);color:var(--osobni)}
+.c-rodina{background:rgba(48,209,88,.12);color:var(--rodina)}
+.c-prace{background:rgba(10,132,255,.12);color:var(--prace)}
+.c-high{background:rgba(255,59,48,.1);color:var(--high)}
+.c-mid{background:rgba(255,159,10,.1);color:var(--mid)}
+.c-low{background:rgba(48,209,88,.1);color:var(--low)}
+.c-proj{background:rgba(94,92,230,.1);color:#5E5CE6}
+.c-share{background:rgba(10,132,255,.07);color:var(--prace);cursor:pointer}
+.c-share:hover{background:rgba(10,132,255,.16)}
+.c-priv{background:rgba(142,142,147,.1);color:var(--muted)}
+.tdate{font-size:.74rem;color:var(--muted)}
+.tdate.ov{color:var(--high);font-weight:600}
+.tdate.td{color:var(--mid);font-weight:600}
+.xbtn{background:none;border:none;cursor:pointer;color:transparent;font-size:1.05rem;padding:2px 4px;transition:color .15s;flex-shrink:0;line-height:1}
+.task-card:hover .xbtn{color:var(--muted)}
+.xbtn:hover{color:var(--high)!important}
+.done-div{font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:20px 0 8px;display:flex;align-items:center;gap:8px}
+.done-div::after{content:'';flex:1;height:1px;background:var(--border)}
+.empty{background:var(--card);border-radius:var(--r-lg);text-align:center;padding:56px 20px;color:var(--muted);box-shadow:var(--shadow)}
+.empty-ico{font-size:2.6rem;margin-bottom:10px;display:block}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:rgba(28,28,30,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);color:#fff;padding:10px 22px;border-radius:100px;font-size:.83rem;font-weight:500;opacity:0;pointer-events:none;transition:opacity .22s;z-index:9999;white-space:nowrap}
 .toast.show{opacity:1}
-
-/* mobile sidebar toggle */
-.mob-header{display:none;background:var(--card);border-bottom:1px solid var(--border);padding:14px 20px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
-.mob-logo{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:600}
-.mob-menu-btn{background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--ink)}
+.mob-bar{display:none;background:rgba(255,255,255,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:14px 20px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.mob-logo{font-size:1.05rem;font-weight:700}
+.mob-menu{background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--ink)}
 @media(max-width:700px){
-  .sidebar{display:none;position:fixed;top:0;left:0;height:100vh;z-index:200;width:240px;box-shadow:var(--shadow-md)}
-  .sidebar.mob-open{display:flex}
-  .mob-header{display:flex}
+  .sidebar{display:none;position:fixed;top:0;left:0;height:100vh;z-index:200;width:270px;box-shadow:var(--shadow-md)}
+  .sidebar.open{display:flex}
+  .mob-bar{display:flex}
   .main{padding:20px 16px}
-  .layout{flex-direction:column}
 }
 </style>
 </head>
 <body>
-
-<div class="mob-header">
-  <span class="mob-logo">Moje úkoly</span>
-  <button class="mob-menu-btn" onclick="document.querySelector('.sidebar').classList.toggle('mob-open')">☰</button>
+<div class="mob-bar">
+  <span class="mob-logo">Úkoly</span>
+  <button class="mob-menu" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
 </div>
-
 <div class="layout">
   <nav class="sidebar">
-    <div class="sb-logo">Moje úkoly<em>osobní centrum</em></div>
-
-    <div class="sb-section">Přehled</div>
-    <div class="sb-item active" data-filter="all" onclick="setFilter('all',this)">
-      <span class="sb-dot" style="background:var(--ink)"></span> Vše
-      <span class="sb-count" id="cnt-all">0</span>
+    <div class="sb-logo">Úkoly<span>osobní centrum</span></div>
+    <div class="sb-group">
+      <div class="sb-lbl">Přehled</div>
+      <div class="sb-item active" onclick="sf('all',this)"><div class="sb-icon" style="background:rgba(142,142,147,.13)">📋</div>Vše<span class="sb-cnt" id="c-all"></span></div>
+      <div class="sb-item" onclick="sf('today',this)"><div class="sb-icon" style="background:rgba(255,159,10,.13)">☀️</div>Dnes<span class="sb-cnt" id="c-today"></span></div>
+      <div class="sb-item" onclick="sf('overdue',this)"><div class="sb-icon" style="background:rgba(255,59,48,.1)">⚠️</div>Po termínu<span class="sb-cnt" id="c-overdue"></span></div>
     </div>
-    <div class="sb-item" data-filter="today" onclick="setFilter('today',this)">
-      <span class="sb-dot" style="background:var(--mid)"></span> Dnes
-      <span class="sb-count" id="cnt-today">0</span>
+    <div class="sb-group">
+      <div class="sb-lbl">Kategorie</div>
+      <div class="sb-item" onclick="sf('osobni',this)"><div class="sb-icon" style="background:rgba(255,107,53,.1)">🧡</div>Osobní<span class="sb-cnt" id="c-osobni"></span></div>
+      <div class="sb-item" onclick="sf('rodina',this)"><div class="sb-icon" style="background:rgba(48,209,88,.1)">💚</div>Rodina<span class="sb-cnt" id="c-rodina"></span></div>
+      <div class="sb-item" onclick="sf('prace',this)"><div class="sb-icon" style="background:rgba(10,132,255,.1)">💙</div>Práce<span class="sb-cnt" id="c-prace"></span></div>
     </div>
-    <div class="sb-item" data-filter="overdue" onclick="setFilter('overdue',this)">
-      <span class="sb-dot" style="background:var(--high)"></span> Po termínu
-      <span class="sb-count" id="cnt-overdue">0</span>
-    </div>
-
-    <div class="sb-section">Kategorie</div>
-    <div class="sb-item cat-osobni" data-filter="osobni" onclick="setFilter('osobni',this)">
-      <span class="sb-dot" style="background:var(--osobni)"></span> Osobní
-      <span class="sb-count" id="cnt-osobni">0</span>
-    </div>
-    <div class="sb-item cat-rodina" data-filter="rodina" onclick="setFilter('rodina',this)">
-      <span class="sb-dot" style="background:var(--rodina)"></span> Rodina
-      <span class="sb-count" id="cnt-rodina">0</span>
-    </div>
-    <div class="sb-item cat-prace" data-filter="prace" onclick="setFilter('prace',this)">
-      <span class="sb-dot" style="background:var(--prace)"></span> Práce
-      <span class="sb-count" id="cnt-prace">0</span>
-    </div>
-
     <div class="sb-spacer"></div>
-    <div class="sb-links">
-      <a class="sb-link" href="#" onclick="showSharePanel()">🔗 Sdílené pohledy</a>
-      <a class="sb-link" href="dashboard.html" target="_blank">👁 Náhled dashboardu</a>
+    <div class="sb-footer">
+      <button class="sb-flink" onclick="toggleSP()">🔗 Sdílené pohledy</button>
+      <button class="sb-flink" onclick="window.open('dashboard.html','_blank')">👁 Náhled dashboardu</button>
     </div>
   </nav>
-
   <main class="main">
-    <div class="page-header">
-      <div>
-        <div class="page-title" id="pageTitle">Všechny úkoly</div>
-      </div>
-      <button class="btn-new" onclick="toggleAddPanel()">+ Nový úkol</button>
+    <div class="page-hd">
+      <div class="page-title" id="pageTitle">Vše</div>
+      <button class="btn-add" onclick="toggleAdd()">＋ Nový úkol</button>
     </div>
-
-    <!-- share panel -->
-    <div class="share-panel" id="sharePanel">
-      <div class="share-panel-title">🔗 Sdílené pohledy — zkopíruj odkaz a pošli ho</div>
-      <div class="share-list" id="shareList"></div>
+    <div class="share-panel" id="SP"><div class="sp-hd">Sdílené pohledy</div><div id="spList"></div></div>
+    <div class="add-panel" id="AP">
+      <div class="add-lbl">Nový úkol</div>
+      <div class="fg fg2"><div class="f"><label>Název</label><input type="text" id="aT" placeholder="Co je potřeba…"></div><div class="f"><label>Termín</label><input type="date" id="aD"></div></div>
+      <div class="fg fg3">
+        <div class="f"><label>Kategorie</label><select id="aC" onchange="onCat()"><option value="osobni">🧡 Osobní</option><option value="rodina">💚 Rodina</option><option value="prace">💙 Práce</option></select></div>
+        <div class="f"><label>Priorita</label><select id="aP"><option value="high">🔴 Vysoká</option><option value="mid" selected>🟡 Střední</option><option value="low">🟢 Nízká</option></select></div>
+        <div class="f"><label>Upozornění</label><input type="time" id="aTm"></div>
+      </div>
+      <div class="proj-row" id="PR">
+        <div class="f"><label>Projekt</label><select id="aPS" onchange="onProj()"><option value="">— bez projektu —</option><option value="__new__">+ Nový projekt…</option></select></div>
+        <div class="f" id="NPF" style="display:none"><label>Název projektu</label><input type="text" id="aNP" placeholder="Název…"></div>
+      </div>
+      <div class="share-row" id="SR">
+        <div class="f"><label>Viditelnost</label><select id="aSh" onchange="updHint()"><option value="private">🔒 Soukromé</option></select></div>
+        <div class="share-hint" id="SH">Vidíš jen ty.</div>
+      </div>
+      <div class="add-ft"><button class="btn btn-g" onclick="toggleAdd()">Zrušit</button><button class="btn btn-p" onclick="addTask()">Přidat</button></div>
     </div>
-
-    <!-- add panel -->
-    <div class="add-panel" id="addPanel">
-      <h3>Nový úkol</h3>
-      <div class="field-grid">
-        <div class="field"><label>Název</label><input type="text" id="aTitle" placeholder="Co je potřeba udělat…"></div>
-        <div class="field"><label>Termín</label><input type="date" id="aDate"></div>
-      </div>
-      <div class="field-grid-3">
-        <div class="field"><label>Kategorie</label>
-          <select id="aCat" onchange="onCatChange()">
-            <option value="osobni">🧡 Osobní</option>
-            <option value="rodina">💚 Rodina</option>
-            <option value="prace">💙 Práce</option>
-          </select>
-        </div>
-        <div class="field"><label>Priorita</label>
-          <select id="aPrio">
-            <option value="high">🔴 Vysoká</option>
-            <option value="mid" selected>🟡 Střední</option>
-            <option value="low">🟢 Nízká</option>
-          </select>
-        </div>
-        <div class="field"><label>Upozornění (čas)</label><input type="time" id="aTime"></div>
-      </div>
-
-      <!-- project row (only for prace) -->
-      <div class="proj-row" id="projRow">
-        <div class="field"><label>Projekt</label>
-          <select id="aProjSel" onchange="onProjChange()">
-            <option value="">— bez projektu —</option>
-            <option value="__new__">+ Nový projekt…</option>
-          </select>
-        </div>
-        <div class="field" id="newProjField" style="display:none"><label>Název nového projektu</label><input type="text" id="aNewProj" placeholder="Název projektu"></div>
-      </div>
-
-      <!-- sharing row -->
-      <div class="share-row" id="shareRow">
-        <label>Sdílet s:</label>
-        <select id="aShare">
-          <option value="private">🔒 Soukromé</option>
-          <option value="alex">👔 Alex (šéf)</option>
-        </select>
-        <div class="share-hint" id="shareHint"></div>
-      </div>
-
-      <div class="add-footer">
-        <button class="btn btn-ghost" onclick="toggleAddPanel()">Zrušit</button>
-        <button class="btn btn-primary" onclick="addTask()">Přidat úkol</button>
-      </div>
-    </div>
-
-    <div class="tasks" id="taskList"></div>
+    <div id="TL"></div>
   </main>
 </div>
-
 <div class="toast" id="toast"></div>
-
 <script>
-const SK = 'ukoly_central_v1';
-const SK_CONTACTS = 'ukoly_contacts_v1';
-const SK_PROJECTS = 'ukoly_projects_v1';
+const SK='ukoly_v1',SKC='contacts_v1',SKP='projects_v1';
+let tasks=[],contacts=[],projects=[],fil='all';
 
-let tasks = [], contacts = [], projects = [], currentFilter = 'all';
+function lC(){try{contacts=JSON.parse(localStorage.getItem(SKC)||'[]')}catch{contacts=[]}if(!contacts.length)contacts=[{id:'alex',name:'Alex',type:'work'},{id:'rodina',name:'Rodina',type:'family'}]}
+function lP(){try{projects=JSON.parse(localStorage.getItem(SKP)||'[]')}catch{projects=[]}if(!projects.length)projects=[{id:'proj_web',name:'Redesign webu'},{id:'proj_q3',name:'Q3 kampaň'}]}
+function sP(){localStorage.setItem(SKP,JSON.stringify(projects))}
+function lT(){try{tasks=JSON.parse(localStorage.getItem(SK)||'[]')}catch{tasks=[]}if(!tasks.length)tasks=smpl()}
+function sT(){localStorage.setItem(SK,JSON.stringify(tasks));sync()}
 
-// ── contacts (people you share with) ─────────────────────────────────────────
-function loadContacts() {
-  try { contacts = JSON.parse(localStorage.getItem(SK_CONTACTS)||'[]'); } catch { contacts=[]; }
-  if (!contacts.length) contacts = [
-    { id: 'alex', name: 'Alex', role: 'šéf', type: 'work' },
-    { id: 'rodina', name: 'Rodina', role: 'rodina', type: 'family' },
-  ];
-}
-function saveContacts() { localStorage.setItem(SK_CONTACTS, JSON.stringify(contacts)); }
-
-// ── projects ──────────────────────────────────────────────────────────────────
-function loadProjects() {
-  try { projects = JSON.parse(localStorage.getItem(SK_PROJECTS)||'[]'); } catch { projects=[]; }
-}
-function saveProjects() { localStorage.setItem(SK_PROJECTS, JSON.stringify(projects)); }
-function getOrCreateProject(name) {
-  let p = projects.find(p=>p.name.toLowerCase()===name.toLowerCase());
-  if (!p) { p = {id:'proj_'+Date.now(), name}; projects.push(p); saveProjects(); }
-  return p.id;
-}
-
-// ── tasks ─────────────────────────────────────────────────────────────────────
-function loadTasks() {
-  try { tasks = JSON.parse(localStorage.getItem(SK)||'[]'); } catch { tasks=[]; }
-  if (!tasks.length) tasks = getSample();
-}
-function saveTasks() {
-  localStorage.setItem(SK, JSON.stringify(tasks));
-  syncSharedData();
-}
-function getSample() {
-  const fmt = d => d.toISOString().slice(0,10);
-  const t = new Date(), tm = new Date(t); tm.setDate(t.getDate()+1);
-  return [
-    {id:1,title:'Zavolat zubařovi',cat:'osobni',prio:'high',date:fmt(tm),time:'',share:'private',projId:null,done:false,created:Date.now()-6000},
-    {id:2,title:'Narozeniny Maminky – dárek',cat:'rodina',prio:'high',date:fmt(tm),time:'',share:'rodina',projId:null,done:false,created:Date.now()-5000},
-    {id:3,title:'Finální design webu',cat:'prace',prio:'high',date:fmt(t),time:'14:00',share:'alex',projId:'proj_web',done:false,created:Date.now()-4000},
-    {id:4,title:'Brief pro agenturu',cat:'prace',prio:'mid',date:fmt(tm),time:'',share:'alex',projId:'proj_q3',done:true,created:Date.now()-3000},
-    {id:5,title:'Přečíst 20 stran knihy',cat:'osobni',prio:'low',date:'',time:'',share:'private',projId:null,done:false,created:Date.now()-2000},
-    {id:6,title:'Víkendový výlet – rezervace',cat:'rodina',prio:'mid',date:'',time:'',share:'rodina',projId:null,done:false,created:Date.now()-1000},
+function smpl(){
+  const f=d=>d.toISOString().slice(0,10),n=new Date(),tm=new Date(n);tm.setDate(n.getDate()+1);
+  return[
+    {id:1,title:'Zavolat zubařovi',cat:'osobni',prio:'high',date:f(tm),time:'',share:'private',projId:null,done:false,created:Date.now()-6e3},
+    {id:2,title:'Narozeniny Maminky – dárek',cat:'rodina',prio:'high',date:f(tm),time:'',share:'rodina',projId:null,done:false,created:Date.now()-5e3},
+    {id:3,title:'Finální design webu',cat:'prace',prio:'high',date:f(n),time:'14:00',share:'alex',projId:'proj_web',done:false,created:Date.now()-4e3},
+    {id:4,title:'Brief pro agenturu',cat:'prace',prio:'mid',date:f(tm),time:'',share:'alex',projId:'proj_q3',done:true,created:Date.now()-3e3},
+    {id:5,title:'Přečíst 20 stran knihy',cat:'osobni',prio:'low',date:'',time:'',share:'private',projId:null,done:false,created:Date.now()-2e3},
+    {id:6,title:'Víkendový výlet – rezervace',cat:'rodina',prio:'mid',date:'',time:'',share:'rodina',projId:null,done:false,created:Date.now()-1e3},
   ];
 }
 
-// ── sync shared data ──────────────────────────────────────────────────────────
-function syncSharedData() {
-  // Build per-contact data packages
-  const contactIds = [...new Set(tasks.map(t=>t.share).filter(s=>s&&s!=='private'))];
-  contactIds.forEach(cid => {
-    const sharedTasks = tasks.filter(t=>t.share===cid);
-    const pkg = { tasks: sharedTasks, projects, updatedAt: new Date().toISOString(), owner: 'Katka' };
-    localStorage.setItem('shared_'+cid, JSON.stringify(pkg));
+function sync(){
+  contacts.forEach(c=>{
+    const sh=tasks.filter(t=>t.share===c.id),pm={};
+    sh.forEach(t=>{const k=t.projId||'__none__';if(!pm[k])pm[k]=[];pm[k].push(t);});
+    localStorage.setItem('shared_'+c.id,JSON.stringify({tasks:sh,projMap:pm,projects,updatedAt:new Date().toISOString(),owner:'Katka'}));
   });
-  // Also build Alex's project-grouped view
-  const alexTasks = tasks.filter(t=>t.share==='alex');
-  const projMap = {};
-  alexTasks.forEach(t => {
-    const key = t.projId || '__none__';
-    if (!projMap[key]) projMap[key] = [];
-    projMap[key].push(t);
-  });
-  const alexPkg = { tasks: alexTasks, projMap, projects, updatedAt: new Date().toISOString(), owner: 'Katka' };
-  localStorage.setItem('shared_alex', JSON.stringify(alexPkg));
 }
 
-// ── helpers ───────────────────────────────────────────────────────────────────
-function dateStatus(d){
-  if(!d) return null;
-  const t=new Date();t.setHours(0,0,0,0);const dt=new Date(d);dt.setHours(0,0,0,0);
-  return dt<t?'overdue':dt.getTime()===t.getTime()?'today':'future';
+function ds(d){if(!d)return null;const t=new Date();t.setHours(0,0,0,0);const dt=new Date(d);dt.setHours(0,0,0,0);return dt<t?'ov':dt.getTime()===t.getTime()?'td':'fut'}
+function fd(d){
+  if(!d)return'';const t=new Date();t.setHours(0,0,0,0);const dt=new Date(d);dt.setHours(0,0,0,0);
+  const df=Math.round((dt-t)/86400000);
+  if(df===0)return'Dnes';if(df===1)return'Zítra';if(df===-1)return'Včera';
+  if(df<0)return`${Math.abs(df)}d zpět`;
+  return dt.toLocaleDateString('cs-CZ',{day:'numeric',month:'short'});
 }
-function fmtDate(d){
-  if(!d) return '';
-  const t=new Date();t.setHours(0,0,0,0);const dt=new Date(d);dt.setHours(0,0,0,0);
-  const diff=Math.round((dt-t)/86400000);
-  if(diff===0) return '📅 Dnes';if(diff===1) return '📅 Zítra';if(diff===-1) return '⚠️ Včera';
-  if(diff<0) return `⚠️ ${Math.abs(diff)}d zpět`;
-  return '📅 '+dt.toLocaleDateString('cs-CZ',{day:'numeric',month:'short'});
-}
-function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function getProjName(id){if(!id)return null;const p=projects.find(p=>p.id===id);return p?p.name:null;}
-function getContactName(id){if(!id||id==='private')return null;const c=contacts.find(c=>c.id===id);return c?c.name:id;}
-function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600);}
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function pn(id){if(!id)return null;const p=projects.find(p=>p.id===id);return p?p.name:null}
+function cn(id){if(!id||id==='private')return null;const c=contacts.find(c=>c.id===id);return c?c.name:id}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2300)}
 
-// ── filter ────────────────────────────────────────────────────────────────────
-const filterTitles = {all:'Všechny úkoly',today:'Dnes',overdue:'Po termínu',osobni:'Osobní',rodina:'Rodina',prace:'Práce'};
-function setFilter(f,el){
-  currentFilter=f;
-  document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
-  if(el) el.classList.add('active');
-  document.getElementById('pageTitle').innerHTML = filterTitles[f]||f;
-  render();
-}
-function getFiltered(){
-  let list=[...tasks];
-  if(currentFilter==='today') list=list.filter(t=>dateStatus(t.date)==='today');
-  else if(currentFilter==='overdue') list=list.filter(t=>!t.done&&dateStatus(t.date)==='overdue');
-  else if(['osobni','rodina','prace'].includes(currentFilter)) list=list.filter(t=>t.cat===currentFilter);
-  list.sort((a,b)=>{
-    if(a.done!==b.done) return a.done?1:-1;
-    const po={high:0,mid:1,low:2};return po[a.prio]-po[b.prio];
-  });
-  return list;
+const ftitles={all:'Vše',today:'Dnes',overdue:'Po termínu',osobni:'Osobní',rodina:'Rodina',prace:'Práce'};
+function sf(f,el){fil=f;document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));if(el)el.classList.add('active');document.getElementById('pageTitle').textContent=ftitles[f]||f;render()}
+
+function gf(){
+  let l=[...tasks];
+  if(fil==='today')l=l.filter(t=>ds(t.date)==='td');
+  else if(fil==='overdue')l=l.filter(t=>!t.done&&ds(t.date)==='ov');
+  else if(['osobni','rodina','prace'].includes(fil))l=l.filter(t=>t.cat===fil);
+  l.sort((a,b)=>{if(a.done!==b.done)return a.done?1:-1;return{high:0,mid:1,low:2}[a.prio]-{high:0,mid:1,low:2}[b.prio]});
+  return l;
 }
 
-// ── counts ────────────────────────────────────────────────────────────────────
-function updateCounts(){
-  const active=tasks.filter(t=>!t.done);
-  document.getElementById('cnt-all').textContent=active.length;
-  document.getElementById('cnt-today').textContent=active.filter(t=>dateStatus(t.date)==='today').length;
-  document.getElementById('cnt-overdue').textContent=active.filter(t=>dateStatus(t.date)==='overdue').length;
-  document.getElementById('cnt-osobni').textContent=active.filter(t=>t.cat==='osobni').length;
-  document.getElementById('cnt-rodina').textContent=active.filter(t=>t.cat==='rodina').length;
-  document.getElementById('cnt-prace').textContent=active.filter(t=>t.cat==='prace').length;
+function uc(){
+  const a=tasks.filter(t=>!t.done);
+  document.getElementById('c-all').textContent=a.length||'';
+  document.getElementById('c-today').textContent=a.filter(t=>ds(t.date)==='td').length||'';
+  document.getElementById('c-overdue').textContent=a.filter(t=>ds(t.date)==='ov').length||'';
+  document.getElementById('c-osobni').textContent=a.filter(t=>t.cat==='osobni').length||'';
+  document.getElementById('c-rodina').textContent=a.filter(t=>t.cat==='rodina').length||'';
+  document.getElementById('c-prace').textContent=a.filter(t=>t.cat==='prace').length||'';
 }
 
-// ── render ────────────────────────────────────────────────────────────────────
-const catLabel={osobni:'🧡 Osobní',rodina:'💚 Rodina',prace:'💙 Práce'};
-const prioLabel={high:'🔴 Vysoká',mid:'🟡 Střední',low:'🟢 Nízká'};
+const catL={osobni:'Osobní',rodina:'Rodina',prace:'Práce'};
+const prioL={high:'Vysoká',mid:'Střední',low:'Nízká'};
 
 function render(){
-  updateCounts();
-  const list=getFiltered();
-  const container=document.getElementById('taskList');
-  if(!list.length){container.innerHTML='<div class="empty"><div class="empty-icon">✨</div>Žádné úkoly v tomto pohledu.</div>';return;}
-
-  // group done/active
-  const active=list.filter(t=>!t.done),done=list.filter(t=>t.done);
-  let html='';
-  if(active.length) html+=active.map(renderTask).join('');
-  if(done.length){
-    html+=`<div class="section-lbl">Splněno (${done.length})</div>`;
-    html+=done.map(renderTask).join('');
-  }
-  container.innerHTML=html;
+  uc();const l=gf(),c=document.getElementById('TL');
+  if(!l.length){c.innerHTML='<div class="empty"><span class="empty-ico">✨</span>Žádné úkoly v tomto pohledu.</div>';return}
+  const active=l.filter(t=>!t.done),done=l.filter(t=>t.done);
+  let h='';
+  if(active.length)h+=`<div class="task-group">${active.map(rc).join('')}</div>`;
+  if(done.length)h+=`<div class="done-div">Splněno (${done.length})</div><div class="task-group">${done.map(rc).join('')}</div>`;
+  c.innerHTML=h;
 }
 
-function renderTask(task){
-  const ds=dateStatus(task.date),dc=ds==='overdue'?' overdue':ds==='today'?' today':'';
-  const proj=getProjName(task.projId);
-  const contactName=getContactName(task.share);
-  const shareTag=task.share==='private'
-    ?'<span class="tag tag-private">🔒 Soukromé</span>'
-    :`<span class="tag tag-share share-badge" onclick="copyShareUrl('${task.share}')" title="Kopírovat odkaz">🔗 ${esc(contactName)}</span>`;
-  return `<div class="task-card${task.done?' done':''}" data-cat="${task.cat}" data-id="${task.id}">
-    <div class="task-check${task.done?' checked':''}" onclick="toggleDone(${task.id})"></div>
-    <div class="task-body">
-      <div class="task-title">${esc(task.title)}</div>
-      <div class="task-meta">
-        <span class="tag tag-${task.cat}">${catLabel[task.cat]}</span>
-        <span class="tag tag-${task.prio}">${prioLabel[task.prio]}</span>
-        ${proj?`<span class="tag tag-proj">📁 ${esc(proj)}</span>`:''}
-        ${task.date?`<span class="task-date${dc}">${fmtDate(task.date)}</span>`:''}
-        ${shareTag}
+function rc(t){
+  const s=ds(t.date),dc=s==='ov'?' ov':s==='td'?' td':'';
+  const p=pn(t.projId),cont=cn(t.share);
+  const sch=t.share==='private'
+    ?`<span class="chip c-priv">🔒 Soukromé</span>`
+    :`<span class="chip c-share" onclick="cpLink('${t.share}')" title="Kopírovat odkaz">🔗 ${esc(cont)}</span>`;
+  return`<div class="task-card${t.done?' done':''}" data-id="${t.id}">
+    <div class="chk${t.done?' on':''}" onclick="tog(${t.id})"></div>
+    <div class="tbody">
+      <div class="ttl">${esc(t.title)}</div>
+      <div class="meta">
+        <span class="chip c-${t.cat}">${catL[t.cat]}</span>
+        <span class="chip c-${t.prio}">${prioL[t.prio]}</span>
+        ${p?`<span class="chip c-proj">📁 ${esc(p)}</span>`:''}
+        ${t.date?`<span class="tdate${dc}">${fd(t.date)}</span>`:''}
+        ${sch}
       </div>
     </div>
-    <div class="task-actions">
-      <button class="act-btn" onclick="deleteTask(${task.id})" title="Smazat">×</button>
-    </div>
+    <button class="xbtn" onclick="del(${t.id})">×</button>
   </div>`;
 }
 
-// ── mutations ─────────────────────────────────────────────────────────────────
-function toggleDone(id){
-  const t=tasks.find(t=>t.id===id);if(!t)return;
-  t.done=!t.done;if(t.done)toast('✅ Splněno!');
-  saveTasks();render();
-}
-function deleteTask(id){tasks=tasks.filter(t=>t.id!==id);saveTasks();render();toast('🗑 Smazáno');}
+function tog(id){const t=tasks.find(t=>t.id===id);if(!t)return;t.done=!t.done;if(t.done)toast('✓ Splněno');sT();render()}
+function del(id){tasks=tasks.filter(t=>t.id!==id);sT();render();toast('Smazáno')}
 
-// ── add panel ─────────────────────────────────────────────────────────────────
-function toggleAddPanel(){
-  const p=document.getElementById('addPanel');
-  p.classList.toggle('open');
-  if(p.classList.contains('open')) document.getElementById('aTitle').focus();
-}
-function onCatChange(){
-  const cat=document.getElementById('aCat').value;
-  const projRow=document.getElementById('projRow');
-  const shareRow=document.getElementById('shareRow');
-  const shareSelect=document.getElementById('aShare');
+function toggleAdd(){const p=document.getElementById('AP');p.classList.toggle('open');if(p.classList.contains('open'))document.getElementById('aT').focus()}
 
-  if(cat==='prace'){
-    projRow.classList.add('show');
-    shareRow.classList.add('show');
-    // populate share options for work
-    shareSelect.innerHTML=`<option value="private">🔒 Soukromé</option>`
-      +contacts.filter(c=>c.type==='work').map(c=>`<option value="${c.id}">👔 ${esc(c.name)}</option>`).join('');
-    updateShareHint();
-  } else if(cat==='rodina'){
-    projRow.classList.remove('show');
-    shareRow.classList.add('show');
-    shareSelect.innerHTML=`<option value="private">🔒 Soukromé</option>`
-      +contacts.filter(c=>c.type==='family').map(c=>`<option value="${c.id}">👨‍👩‍👧 ${esc(c.name)}</option>`).join('');
-    updateShareHint();
-  } else {
-    projRow.classList.remove('show');
-    shareRow.classList.add('show');
-    shareSelect.innerHTML=`<option value="private">🔒 Soukromé</option>`;
-    updateShareHint();
-  }
+function onCat(){
+  const cat=document.getElementById('aC').value,PR=document.getElementById('PR'),SR=document.getElementById('SR'),ss=document.getElementById('aSh');
+  if(cat==='prace'){PR.classList.add('on');SR.classList.add('on');ss.innerHTML=`<option value="private">🔒 Soukromé</option>`+contacts.filter(c=>c.type==='work').map(c=>`<option value="${c.id}">👔 ${esc(c.name)}</option>`).join('')}
+  else if(cat==='rodina'){PR.classList.remove('on');SR.classList.add('on');ss.innerHTML=`<option value="private">🔒 Soukromé</option>`+contacts.filter(c=>c.type==='family').map(c=>`<option value="${c.id}">👨‍👩‍👧 ${esc(c.name)}</option>`).join('')}
+  else{PR.classList.remove('on');SR.classList.add('on');ss.innerHTML=`<option value="private">🔒 Soukromé</option>`}
+  updHint();
 }
-function updateShareHint(){
-  const v=document.getElementById('aShare').value;
-  const hint=document.getElementById('shareHint');
-  hint.textContent=v==='private'?'Vidíš jen ty.':v==='alex'?'Zobrazí se Alexovi na jeho dashboardu.':'Zobrazí se sdílenému pohledu pro rodinu.';
+
+function updHint(){
+  const v=document.getElementById('aSh').value,h=document.getElementById('SH');
+  h.textContent=v==='private'?'Vidíš jen ty.':v==='alex'?'Zobrazí se Alexovi na jeho dashboardu.':'Zobrazí se sdílenému rodinnému pohledu.';
 }
-function onProjChange(){
-  const v=document.getElementById('aProjSel').value;
-  document.getElementById('newProjField').style.display=v==='__new__'?'':'none';
+
+function onProj(){document.getElementById('NPF').style.display=document.getElementById('aPS').value==='__new__'?'':'none'}
+
+function ppS(){
+  const s=document.getElementById('aPS');
+  s.innerHTML=`<option value="">— bez projektu —</option>`+projects.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')+`<option value="__new__">+ Nový projekt…</option>`;
 }
-function populateProjSelect(){
-  const sel=document.getElementById('aProjSel');
-  sel.innerHTML=`<option value="">— bez projektu —</option>`
-    +projects.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')
-    +`<option value="__new__">+ Nový projekt…</option>`;
-}
+
 function addTask(){
-  const title=document.getElementById('aTitle').value.trim();
-  if(!title){document.getElementById('aTitle').focus();return;}
-  const cat=document.getElementById('aCat').value;
-  let projId=null;
-  if(cat==='prace'){
-    const ps=document.getElementById('aProjSel').value;
-    if(ps==='__new__'){
-      const nn=document.getElementById('aNewProj').value.trim();
-      if(nn) projId=getOrCreateProject(nn);
-    } else if(ps) projId=ps;
-  }
-  const task={
-    id:Date.now(),title,cat,
-    prio:document.getElementById('aPrio').value,
-    date:document.getElementById('aDate').value,
-    time:document.getElementById('aTime').value,
-    share:document.getElementById('aShare').value,
-    projId,done:false,created:Date.now()
-  };
-  tasks.unshift(task);saveTasks();render();
-  // reset
-  document.getElementById('aTitle').value='';
-  document.getElementById('aDate').value='';
-  document.getElementById('aTime').value='';
-  document.getElementById('aNewProj').value='';
-  document.getElementById('addPanel').classList.remove('open');
-  toast('✚ Úkol přidán');
-  scheduleNotif(task);
+  const title=document.getElementById('aT').value.trim();if(!title)return;
+  const cat=document.getElementById('aC').value;let projId=null;
+  if(cat==='prace'){const ps=document.getElementById('aPS').value;if(ps==='__new__'){const nn=document.getElementById('aNP').value.trim();if(nn){let p=projects.find(p=>p.name===nn);if(!p){p={id:'proj_'+Date.now(),name:nn};projects.push(p);sP();ppS();}projId=p.id;}}else if(ps)projId=ps;}
+  tasks.unshift({id:Date.now(),title,cat,prio:document.getElementById('aP').value,date:document.getElementById('aD').value,time:document.getElementById('aTm').value,share:document.getElementById('aSh').value,projId,done:false,created:Date.now()});
+  sT();render();
+  document.getElementById('aT').value='';document.getElementById('aD').value='';document.getElementById('aTm').value='';document.getElementById('aNP').value='';
+  document.getElementById('AP').classList.remove('open');toast('✚ Úkol přidán');
 }
 
-// ── notifications ─────────────────────────────────────────────────────────────
-const notifTimers={};
-function scheduleNotif(task){
-  if(notifTimers[task.id]) clearTimeout(notifTimers[task.id]);
-  if(!task.date||!task.time||task.done) return;
-  const dt=new Date(task.date+'T'+task.time),delay=dt-Date.now();
-  if(delay>0&&delay<86400000*7){
-    notifTimers[task.id]=setTimeout(()=>{
-      if('Notification'in window&&Notification.permission==='granted') new Notification('⏰ Připomínka',{body:task.title});
-      toast('⏰ '+task.title);
-    },delay);
-  }
-}
-
-// ── share panel ───────────────────────────────────────────────────────────────
-function showSharePanel(){
-  const panel=document.getElementById('sharePanel');
-  panel.classList.toggle('show');
-  if(!panel.classList.contains('show')) return;
+function toggleSP(){
+  const p=document.getElementById('SP');p.classList.toggle('on');
+  if(!p.classList.contains('on'))return;
   const base=location.href.replace('app.html','dashboard.html');
-  const list=document.getElementById('shareList');
-  list.innerHTML=contacts.map(c=>{
-    const url=base+'#'+c.id;
-    return `<div class="share-item">
-      <span class="share-item-name">${c.type==='work'?'👔':'👨‍👩‍👧'} ${esc(c.name)}</span>
-      <span class="share-url-txt">${esc(url)}</span>
-      <button class="btn-copy-sm" onclick="copyText('${url}')">Kopírovat</button>
-    </div>`;
-  }).join('');
-}
-function copyShareUrl(cid){
-  const base=location.href.replace('app.html','dashboard.html');
-  copyText(base+'#'+cid);
-}
-function copyText(txt){
-  if(navigator.clipboard) navigator.clipboard.writeText(txt).then(()=>toast('📋 Odkaz zkopírován!'));
-  else{const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('📋 Odkaz zkopírován!');}
+  document.getElementById('spList').innerHTML=contacts.map(c=>`
+    <div class="sp-row">
+      <span class="sp-name">${c.type==='work'?'👔':'👨‍👩‍👧'} ${esc(c.name)}</span>
+      <span class="sp-url">${esc(base+'#'+c.id)}</span>
+      <button class="btn-cp" onclick="cpTxt('${base+'#'+c.id}')">Kopírovat</button>
+    </div>`).join('');
 }
 
-// ── share hint listener ───────────────────────────────────────────────────────
-document.getElementById('aShare').addEventListener('change',updateShareHint);
-
-// ── init ──────────────────────────────────────────────────────────────────────
-loadContacts();loadProjects();loadTasks();
-populateProjSelect();
-// init projects from sample
-if(!projects.length){
-  projects=[{id:'proj_web',name:'Redesign webu'},{id:'proj_q3',name:'Q3 kampaň'}];
-  saveProjects();
+function cpLink(cid){cpTxt(location.href.replace('app.html','dashboard.html')+'#'+cid)}
+function cpTxt(txt){
+  if(navigator.clipboard)navigator.clipboard.writeText(txt).then(()=>toast('📋 Zkopírováno'));
+  else{const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('📋 Zkopírováno')}
 }
-onCatChange();
-if('Notification'in window&&Notification.permission==='default') setTimeout(()=>Notification.requestPermission(),1500);
-tasks.forEach(scheduleNotif);
-render();
+
+if('Notification'in window&&Notification.permission==='default')setTimeout(()=>Notification.requestPermission(),2e3);
+lC();lP();lT();ppS();onCat();render();
 </script>
 </body>
 </html>
