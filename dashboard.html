@@ -132,6 +132,18 @@ h1 span{font-weight:300;color:var(--muted)}
 const vid=location.hash.replace('#','')||null;
 const openB=new Set();
 
+const SB_URL='https://hkymvggbivowecordrfp.supabase.co';
+const SB_KEY='sb_publishable_X8386tw08HixvSiv0qartQ_bDwcb4vd';
+
+async function sbGetShared(uid){
+  try{
+    const r=await fetch(`${SB_URL}/rest/v1/tasks?user_id=eq.shared_${uid}&order=updated_at.desc&limit=1`,{headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}});
+    if(!r.ok)return null;
+    const d=await r.json();
+    return d.length?JSON.parse(d[0].data):null;
+  }catch{return null}
+}
+
 function ds(d){if(!d)return null;const t=new Date();t.setHours(0,0,0,0);const dt=new Date(d);dt.setHours(0,0,0,0);return dt<t?'ov':dt.getTime()===t.getTime()?'td':'fut'}
 function fd(d){
   if(!d)return'';const t=new Date();t.setHours(0,0,0,0);const dt=new Date(d);dt.setHours(0,0,0,0);
@@ -144,10 +156,16 @@ function pct(tasks){if(!tasks||!tasks.length)return 0;return Math.round(tasks.fi
 function fc(p){return p===100?'fill-dn':p>=60?'fill-hi':p>=30?'fill-mi':p>0?'fill-lo':'fill-0'}
 function pc(p){return p==='high'?'var(--rose)':p==='mid'?'var(--amber)':'var(--sage)'}
 
-function load(){
+async function load(){
+  document.getElementById('upd').textContent='Načítám…';
   let data=null;
-  if(vid){try{const r=localStorage.getItem('shared_'+vid);if(r)data=JSON.parse(r)}catch{}}
-  if(!data){for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('shared_')){try{data=JSON.parse(localStorage.getItem(k));break}catch{}}}}
+  // try Supabase first
+  if(vid) data=await sbGetShared(vid);
+  // fallback to localStorage
+  if(!data){
+    if(vid){try{const r=localStorage.getItem('shared_'+vid);if(r)data=JSON.parse(r)}catch{}}
+    if(!data){for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('shared_')){try{data=JSON.parse(localStorage.getItem(k));break}catch{}}}}
+  }
   if(!data){noData();return}
   render(data);
 }

@@ -195,7 +195,10 @@ input:focus,select:focus{border-color:var(--prace);box-shadow:0 0 0 3px rgba(10,
 <body>
 <div class="mob-bar">
   <span class="mob-logo">Úkoly</span>
-  <button class="mob-menu" onclick="document.querySelector('.sidebar').classList.toggle('open');document.getElementById('sbo').classList.toggle('show')">☰</button>
+  <div style="display:flex;align-items:center;gap:10px">
+    <span id="syncDot" title="Synchronizováno" style="width:8px;height:8px;border-radius:50%;background:var(--muted);display:inline-block;transition:background .3s"></span>
+    <button class="mob-menu" onclick="document.querySelector('.sidebar').classList.toggle('open');document.getElementById('sbo').classList.toggle('show')">☰</button>
+  </div>
 </div>
 <!-- sidebar overlay -->
 <div id="sbo" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:199" onclick="document.querySelector('.sidebar').classList.remove('open');this.style.display='none'"></div>
@@ -283,31 +286,108 @@ input:focus,select:focus{border-color:var(--prace);box-shadow:0 0 0 3px rgba(10,
 const SK='ukoly_v1',SKC='contacts_v1',SKP='projects_v1';
 let tasks=[],contacts=[],projects=[],fil='all';
 
-function lC(){try{contacts=JSON.parse(localStorage.getItem(SKC)||'[]')}catch{contacts=[]}if(!contacts.length)contacts=[{id:'alex',name:'Alex',type:'work'},{id:'rodina',name:'Rodina',type:'family'}]}
-function lP(){try{projects=JSON.parse(localStorage.getItem(SKP)||'[]')}catch{projects=[]}if(!projects.length)projects=[{id:'proj_web',name:'Redesign webu',status:'active',date:'',note:'',vis:'alex',created:Date.now()-2e3},{id:'proj_q3',name:'Q3 kampaň',status:'active',date:'2026-07-01',note:'Briefujeme agenturu.',vis:'alex',created:Date.now()-1e3}]}
-function sP(){localStorage.setItem(SKP,JSON.stringify(projects));sync()}
-function lT(){try{tasks=JSON.parse(localStorage.getItem(SK)||'[]')}catch{tasks=[]}if(!tasks.length)tasks=smpl()}
-function sT(){localStorage.setItem(SK,JSON.stringify(tasks));sync()}
+// ── Supabase config ───────────────────────────────────────────────────────────
+const SB_URL='https://hkymvggbivowecordrfp.supabase.co';
+const SB_KEY='sb_publishable_X8386tw08HixvSiv0qartQ_bDwcb4vd';
+const USER_ID='katka'; // unique id for this user's data
 
-function smpl(){
-  const f=d=>d.toISOString().slice(0,10),n=new Date(),tm=new Date(n);tm.setDate(n.getDate()+1);
-  return[
-    {id:1,title:'Zavolat zubařovi',cat:'osobni',prio:'high',date:f(tm),time:'',share:'private',projId:null,done:false,created:Date.now()-6e3},
-    {id:2,title:'Narozeniny Maminky – dárek',cat:'rodina',prio:'high',date:f(tm),time:'',share:'rodina',projId:null,done:false,created:Date.now()-5e3},
-    {id:3,title:'Finální design webu',cat:'prace',prio:'high',date:f(n),time:'14:00',share:'alex',projId:'proj_web',done:false,created:Date.now()-4e3},
-    {id:4,title:'Brief pro agenturu',cat:'prace',prio:'mid',date:f(tm),time:'',share:'alex',projId:'proj_q3',done:true,created:Date.now()-3e3},
-    {id:5,title:'Přečíst 20 stran knihy',cat:'osobni',prio:'low',date:'',time:'',share:'private',projId:null,done:false,created:Date.now()-2e3},
-    {id:6,title:'Víkendový výlet – rezervace',cat:'rodina',prio:'mid',date:'',time:'',share:'rodina',projId:null,done:false,created:Date.now()-1e3},
-  ];
+async function sbGet(uid){
+  try{
+    const r=await fetch(`${SB_URL}/rest/v1/tasks?user_id=eq.${uid}&order=updated_at.desc&limit=1`,{headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}});
+    if(!r.ok)return null;
+    const d=await r.json();
+    return d.length?JSON.parse(d[0].data):null;
+  }catch{return null}
 }
 
-function sync(){
-  contacts.forEach(c=>{
+async function sbSave(uid,data){
+  try{
+    // upsert — insert or update
+    await fetch(`${SB_URL}/rest/v1/tasks`,{
+      method:'POST',
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},
+      body:JSON.stringify({user_id:uid,data:JSON.stringify(data),updated_at:new Date().toISOString()})
+    });
+  }catch(e){console.warn('Supabase save failed',e)}
+}
+
+async function sbSaveShared(uid,data){
+  try{
+    await fetch(`${SB_URL}/rest/v1/tasks`,{
+      method:'POST',
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},
+      body:JSON.stringify({user_id:'shared_'+uid,data:JSON.stringify(data),updated_at:new Date().toISOString()})
+    });
+  }catch(e){console.warn('Supabase shared save failed',e)}
+}
+
+function lC(){try{contacts=JSON.parse(localStorage.getItem(SKC)||'[]')}catch{contacts=[]}if(!contacts.length)contacts=[{id:'alex',name:'Alex',type:'work'},{id:'rodina',name:'Rodina',type:'family'}]}
+
+function lP(){
+  try{projects=JSON.parse(localStorage.getItem(SKP)||'[]')}catch{projects=[]}
+  if(!projects.length)projects=[{id:'proj_web',name:'Redesign webu',status:'active',date:'',note:'',vis:'alex',created:Date.now()-2e3},{id:'proj_q3',name:'Q3 kampaň',status:'active',date:'2026-07-01',note:'Briefujeme agenturu.',vis:'alex',created:Date.now()-1e3}]
+}
+
+function sP(){
+  localStorage.setItem(SKP,JSON.stringify(projects));
+  saveToCloud();
+}
+
+function lT(){
+  try{tasks=JSON.parse(localStorage.getItem(SK)||'[]')}catch{tasks=[]}
+  if(!tasks.length)tasks=smpl();
+}
+
+function sT(){
+  localStorage.setItem(SK,JSON.stringify(tasks));
+  saveToCloud();
+}
+
+let saveTimer=null;
+function saveToCloud(){
+  // debounce — save after 800ms of inactivity
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(async()=>{
+    const payload={tasks,projects,updatedAt:new Date().toISOString()};
+    await sbSave(USER_ID,payload);
+    sync();
+    setSyncStatus('ok');
+  },800);
+  setSyncStatus('saving');
+}
+
+async function loadFromCloud(){
+  setSyncStatus('loading');
+  const data=await sbGet(USER_ID);
+  if(data){
+    if(data.tasks){tasks=data.tasks;localStorage.setItem(SK,JSON.stringify(tasks));}
+    if(data.projects){projects=data.projects;localStorage.setItem(SKP,JSON.stringify(projects));}
+    setSyncStatus('ok');
+  } else {
+    // fallback to localStorage
+    lT();lP();
+    setSyncStatus('offline');
+  }
+  render();
+}
+
+function setSyncStatus(s){
+  const el=document.getElementById('syncDot');
+  if(!el)return;
+  el.title=s==='ok'?'Synchronizováno':s==='saving'?'Ukládám…':s==='loading'?'Načítám…':'Offline – lokální data';
+  el.style.background=s==='ok'?'var(--rodina)':s==='saving'?'var(--mid)':s==='offline'?'var(--high)':'var(--muted)';
+}
+
+async function sync(){
+  contacts.forEach(async c=>{
     const sh=tasks.filter(t=>t.share===c.id),pm={};
     sh.forEach(t=>{const k=t.projId||'__none__';if(!pm[k])pm[k]=[];pm[k].push(t);});
-    // Alex always sees all projects (even empty ones) if vis=alex
     const sharedProjs=c.id==='alex'?projects.filter(p=>p.vis==='alex'||!p.vis):projects.filter(p=>p.vis===c.id);
-    localStorage.setItem('shared_'+c.id,JSON.stringify({tasks:sh,projMap:pm,projects:sharedProjs,updatedAt:new Date().toISOString(),owner:'Katka'}));
+    const pkg={tasks:sh,projMap:pm,projects:sharedProjs,updatedAt:new Date().toISOString(),owner:'Katka'};
+    // save to localStorage for same-device dashboard
+    localStorage.setItem('shared_'+c.id,JSON.stringify(pkg));
+    // save to Supabase for cross-device dashboard
+    await sbSaveShared(c.id,pkg);
   });
 }
 
@@ -590,7 +670,11 @@ function exportIcs(id){
 }
 
 if('Notification'in window&&Notification.permission==='default')setTimeout(()=>Notification.requestPermission(),2e3);
-lC();lP();lT();ppS();onCat();render();
+lC();lP();lT();ppS();onCat();
+// load from cloud, fallback to localStorage
+loadFromCloud();
+// auto-refresh every 60s
+setInterval(loadFromCloud,60000);
 </script>
 </body>
 </html>
