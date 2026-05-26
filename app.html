@@ -112,6 +112,25 @@ input:focus,select:focus{border-color:var(--prace);box-shadow:0 0 0 3px rgba(10,
 .calbtn{background:none;border:none;cursor:pointer;color:transparent;font-size:.9rem;padding:2px 4px;transition:color .15s;flex-shrink:0;line-height:1;text-decoration:none}
 .task-card:hover .calbtn{color:var(--muted)}
 .calbtn:hover{color:var(--prace)!important}
+/* subtasks */
+.subtasks{margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.subtask-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(60,60,67,.06)}
+.subtask-row:last-of-type{border-bottom:none}
+.sub-chk{width:16px;height:16px;border-radius:4px;border:2px solid var(--border);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;background:transparent}
+.sub-chk:hover{border-color:var(--prace)}
+.sub-chk.on{background:var(--rodina);border-color:var(--rodina)}
+.sub-chk.on::after{content:'✓';color:#fff;font-size:9px;font-weight:700}
+.sub-name{flex:1;font-size:.82rem;color:var(--ink2)}
+.sub-name.done{text-decoration:line-through;color:var(--muted)}
+.sub-del{background:none;border:none;cursor:pointer;color:transparent;font-size:.9rem;padding:1px 3px;line-height:1;transition:color .15s}
+.subtask-row:hover .sub-del{color:var(--muted)}
+.sub-del:hover{color:var(--high)!important}
+.sub-add-row{display:flex;gap:6px;margin-top:8px}
+.sub-add-row input{flex:1;font-size:.82rem;padding:6px 10px;border-radius:8px}
+.sub-add-btn{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:.78rem;font-weight:600;font-family:inherit;cursor:pointer;color:var(--muted);white-space:nowrap;transition:background .15s}
+.sub-add-btn:hover{background:var(--border)}
+.sub-toggle{background:none;border:none;cursor:pointer;font-size:.72rem;color:var(--muted);padding:2px 4px;font-family:inherit;transition:color .15s;display:flex;align-items:center;gap:3px;margin-top:2px}
+.sub-toggle:hover{color:var(--prace)}
 .done-div{font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:20px 0 8px;display:flex;align-items:center;gap:8px}
 .done-div::after{content:'';flex:1;height:1px;background:var(--border)}
 .proj-grid{display:flex;flex-direction:column;gap:10px}
@@ -227,6 +246,9 @@ input:focus,select:focus{border-color:var(--prace);box-shadow:0 0 0 3px rgba(10,
       <div class="share-row" id="SR">
         <div class="f"><label>Viditelnost</label><select id="aSh" onchange="updHint()"><option value="private">🔒 Soukromé</option></select></div>
         <div class="share-hint" id="SH">Vidíš jen ty.</div>
+      </div>
+      <div class="fg" style="grid-template-columns:1fr;margin-bottom:10px">
+        <div class="f"><label>Poznámka (volitelné)</label><input type="text" id="aNote" placeholder="Krátký popis nebo kontext…"></div>
       </div>
       <div class="add-ft"><button class="btn btn-g" onclick="toggleAdd()">Zrušit</button><button class="btn btn-p" onclick="addTask()">Přidat</button></div>
     </div>
@@ -407,16 +429,37 @@ function renderProjCard(p){
   </div>`;
 }
 
+const openSubs=new Set();
+
 function rc(t){
   const s=ds(t.date),dc=s==='ov'?' ov':s==='td'?' td':'';
   const p=pn(t.projId),cont=cn(t.share);
+  const subs=t.subtasks||[];
+  const doneSubs=subs.filter(s=>s.done).length;
   const sch=t.share==='private'
     ?`<span class="chip c-priv">🔒 Soukromé</span>`
     :`<span class="chip c-share" onclick="cpLink('${t.share}')" title="Kopírovat odkaz">🔗 ${esc(cont)}</span>`;
+  const isOpen=openSubs.has(t.id);
+  const subHtml=isOpen?`
+    <div class="subtasks">
+      ${subs.map(sub=>`<div class="subtask-row">
+        <div class="sub-chk${sub.done?' on':''}" onclick="togSub(${t.id},${sub.id})"></div>
+        <span class="sub-name${sub.done?' done':''}">${esc(sub.name)}</span>
+        <button class="sub-del" onclick="delSub(${t.id},${sub.id})">×</button>
+      </div>`).join('')}
+      <div class="sub-add-row">
+        <input type="text" id="si_${t.id}" placeholder="Přidat podúkol…" onkeydown="if(event.key==='Enter')addSub(${t.id})">
+        <button class="sub-add-btn" onclick="addSub(${t.id})">+ Přidat</button>
+      </div>
+    </div>`:'';
+  const subToggle=`<button class="sub-toggle" onclick="toggleSubs(${t.id})">
+    ${subs.length?`${doneSubs}/${subs.length} podúkolů`:'+ Podúkoly'} ${isOpen?'▲':'▼'}
+  </button>`;
   return`<div class="task-card${t.done?' done':''}" data-id="${t.id}">
     <div class="chk${t.done?' on':''}" onclick="tog(${t.id})"></div>
     <div class="tbody">
       <div class="ttl">${esc(t.title)}</div>
+      ${t.note?`<div style="font-size:.78rem;color:var(--muted);margin-bottom:4px;line-height:1.4">${esc(t.note)}</div>`:''}
       <div class="meta">
         <span class="chip c-${t.cat}">${catL[t.cat]}</span>
         <span class="chip c-${t.prio}">${prioL[t.prio]}</span>
@@ -424,10 +467,31 @@ function rc(t){
         ${t.date?`<span class="tdate${dc}">${fd(t.date)}</span>`:''}
         ${sch}
       </div>
+      ${subToggle}
+      ${subHtml}
     </div>
     ${t.date?`<button class="calbtn" onclick="exportIcs(${t.id})" title="Přidat do kalendáře">📅</button>`:''}
     <button class="xbtn" onclick="del(${t.id})">×</button>
   </div>`;
+}
+
+function toggleSubs(id){if(openSubs.has(id))openSubs.delete(id);else openSubs.add(id);render();}
+function addSub(tid){
+  const t=tasks.find(t=>t.id===tid);if(!t)return;
+  const inp=document.getElementById('si_'+tid);if(!inp)return;
+  const name=inp.value.trim();if(!name)return;
+  if(!t.subtasks)t.subtasks=[];
+  t.subtasks.push({id:Date.now(),name,done:false});
+  openSubs.add(tid);sT();render();
+}
+function togSub(tid,sid){
+  const t=tasks.find(t=>t.id===tid);if(!t||!t.subtasks)return;
+  const s=t.subtasks.find(s=>s.id===sid);if(!s)return;
+  s.done=!s.done;openSubs.add(tid);sT();render();
+}
+function delSub(tid,sid){
+  const t=tasks.find(t=>t.id===tid);if(!t||!t.subtasks)return;
+  t.subtasks=t.subtasks.filter(s=>s.id!==sid);openSubs.add(tid);sT();render();
 }
 
 function tog(id){const t=tasks.find(t=>t.id===id);if(!t)return;t.done=!t.done;if(t.done)toast('✓ Splněno');sT();render()}
@@ -469,9 +533,9 @@ function addTask(){
   const title=document.getElementById('aT').value.trim();if(!title)return;
   const cat=document.getElementById('aC').value;let projId=null;
   if(cat==='prace'){const ps=document.getElementById('aPS').value;if(ps==='__new__'){const nn=document.getElementById('aNP').value.trim();if(nn){let p=projects.find(p=>p.name===nn);if(!p){p={id:'proj_'+Date.now(),name:nn};projects.push(p);sP();ppS();}projId=p.id;}}else if(ps)projId=ps;}
-  tasks.unshift({id:Date.now(),title,cat,prio:document.getElementById('aP').value,date:document.getElementById('aD').value,time:document.getElementById('aTm').value,share:document.getElementById('aSh').value,projId,done:false,created:Date.now()});
+  tasks.unshift({id:Date.now(),title,cat,prio:document.getElementById('aP').value,date:document.getElementById('aD').value,time:document.getElementById('aTm').value,share:document.getElementById('aSh').value,note:document.getElementById('aNote').value.trim(),projId,done:false,created:Date.now()});
   sT();render();
-  document.getElementById('aT').value='';document.getElementById('aD').value='';document.getElementById('aTm').value='';document.getElementById('aNP').value='';
+  document.getElementById('aT').value='';document.getElementById('aD').value='';document.getElementById('aTm').value='';document.getElementById('aNP').value='';document.getElementById('aNote').value='';
   document.getElementById('AP').classList.remove('open');toast('✚ Úkol přidán');
 }
 
