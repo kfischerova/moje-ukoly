@@ -3,49 +3,59 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard</title>
+<title>Dashboard — Alex</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#F2F2F7;--card:#FFFFFF;--card2:#F2F2F7;--card3:#E5E5EA;
   --ink:#1C1C1E;--ink2:#3A3A3C;--muted:#8E8E93;--border:rgba(60,60,67,.12);
-  --sage:#30D158;--sage-l:rgba(48,209,88,.1);
-  --amber:#FF9F0A;--amber-l:rgba(255,159,10,.1);
-  --rose:#FF3B30;--rose-l:rgba(255,59,48,.1);
-  --sky:#0A84FF;--sky-l:rgba(10,132,255,.1);
+  --sage:#30D158;--amber:#FF9F0A;--rose:#FF3B30;--sky:#0A84FF;
   --r:13px;--r-lg:18px;
   --shadow:0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04);
   --shadow-md:0 4px 16px rgba(0,0,0,.08),0 2px 6px rgba(0,0,0,.04);
 }
-body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:48px 24px 60px;-webkit-font-smoothing:antialiased;}
-.wrap{max-width:760px;margin:0 auto}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:40px 20px 60px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:780px;margin:0 auto}
 
 /* header */
-.hd{margin-bottom:40px}
+.hd{margin-bottom:36px}
 .hd-row{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px}
-h1{font-size:2.1rem;font-weight:700;letter-spacing:-.03em;line-height:1}
+h1{font-size:2rem;font-weight:700;letter-spacing:-.03em;line-height:1}
 h1 span{font-weight:300;color:var(--muted)}
-.hd-meta{font-size:.76rem;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap}
+.hd-meta{font-size:.75rem;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.hd-btns{display:flex;gap:8px;flex-wrap:wrap}
 .ref-btn{background:var(--card);border:1px solid var(--border);border-radius:100px;padding:6px 16px;font-family:inherit;font-size:.78rem;font-weight:500;color:var(--ink2);cursor:pointer;box-shadow:var(--shadow);transition:box-shadow .15s,transform .1s}
 .ref-btn:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.add-proj-btn{background:var(--sky);color:#fff;border:none;border-radius:100px;padding:6px 16px;font-family:inherit;font-size:.78rem;font-weight:600;cursor:pointer;box-shadow:0 2px 8px rgba(10,132,255,.25);transition:opacity .15s,transform .1s}
+.add-proj-btn:hover{opacity:.88;transform:translateY(-1px)}
+
+/* add project panel */
+.add-panel{background:var(--card);border-radius:var(--r-lg);padding:18px;margin-bottom:20px;box-shadow:var(--shadow-md);display:none;animation:panelIn .18s ease}
+.add-panel.open{display:block}
+@keyframes panelIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.ap-title{font-size:.72rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px}
+.fg{display:grid;gap:10px;margin-bottom:10px}
+.fg2{grid-template-columns:1fr 1fr}
+@media(max-width:540px){.fg2{grid-template-columns:1fr}}
+.f{display:flex;flex-direction:column;gap:4px}
+.f label{font-size:.71rem;font-weight:500;color:var(--muted)}
+input[type=text],input[type=date],select,textarea{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-family:inherit;font-size:.87rem;color:var(--ink);outline:none;width:100%;transition:border-color .15s;-webkit-appearance:none}
+input:focus,select:focus,textarea:focus{border-color:var(--sky);box-shadow:0 0 0 3px rgba(10,132,255,.1)}
+textarea{resize:vertical;min-height:56px}
+.ap-ft{display:flex;justify-content:flex-end;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.btn{border:none;cursor:pointer;font-family:inherit;font-weight:600;border-radius:10px;padding:8px 18px;font-size:.84rem;transition:opacity .15s}
+.btn:hover{opacity:.85}
+.btn-p{background:var(--sky);color:#fff}
+.btn-g{background:var(--bg);color:var(--muted)}
 
 /* summary */
-.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:36px}
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:32px}
 @media(max-width:560px){.summary{grid-template-columns:repeat(2,1fr)}}
-.sum{background:var(--card);border-radius:var(--r-lg);padding:18px 16px;box-shadow:var(--shadow);position:relative;overflow:hidden}
-.sum::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;border-radius:0 0 var(--r-lg) var(--r-lg)}
-.sum.s1::after{background:var(--sky)}
-.sum.s2::after{background:var(--sage)}
-.sum.s3::after{background:var(--amber)}
-.sum.s4::after{background:var(--rose)}
-.sum-n{font-size:2rem;font-weight:700;line-height:1;margin-bottom:3px;letter-spacing:-.02em}
-.sum-l{font-size:.72rem;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
-
-/* section */
-.sec{margin-bottom:32px}
-.sec-hd{display:flex;align-items:center;gap:8px;margin-bottom:12px}
-.sec-title{font-size:1.1rem;font-weight:600;letter-spacing:-.01em}
-.sec-n{font-size:.75rem;font-weight:600;background:var(--card3);border-radius:100px;padding:2px 9px;color:var(--muted)}
+.sum{background:var(--card);border-radius:var(--r-lg);padding:16px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.sum::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px}
+.sum.s1::after{background:var(--sky)}.sum.s2::after{background:var(--sage)}.sum.s3::after{background:var(--amber)}.sum.s4::after{background:var(--rose)}
+.sum-n{font-size:1.9rem;font-weight:700;line-height:1;margin-bottom:3px;letter-spacing:-.02em}
+.sum-l{font-size:.7rem;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
 
 /* project block */
 .pb{background:var(--card);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden;margin-bottom:10px;transition:box-shadow .15s;animation:up .22s ease}
@@ -56,7 +66,7 @@ h1 span{font-weight:300;color:var(--muted)}
 .pb-info{flex:1}
 .pb-name{font-size:1rem;font-weight:600;letter-spacing:-.01em;margin-bottom:3px}
 .pb-sub{font-size:.73rem;color:var(--muted)}
-.pb-pct{font-size:1.4rem;font-weight:700;letter-spacing:-.02em;flex-shrink:0}
+.pb-pct{font-size:1.35rem;font-weight:700;letter-spacing:-.02em;flex-shrink:0}
 .chev{font-size:.8rem;color:var(--muted);flex-shrink:0}
 .prog{padding:0 18px 12px 34px;display:flex;align-items:center;gap:10px}
 .prog-track{flex:1;height:4px;background:var(--card3);border-radius:4px;overflow:hidden}
@@ -66,7 +76,7 @@ h1 span{font-weight:300;color:var(--muted)}
 .pb-body.open{display:block}
 .sub-lbl{font-size:.69rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
 
-/* task rows in project */
+/* task rows */
 .tr{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(60,60,67,.06)}
 .tr:last-child{border-bottom:none}
 .tr-chk{width:16px;height:16px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center}
@@ -82,27 +92,21 @@ h1 span{font-weight:300;color:var(--muted)}
 .c-mid{background:rgba(255,159,10,.1);color:var(--amber)}
 .c-low{background:rgba(48,209,88,.1);color:var(--sage)}
 
-/* family task cards */
-.fc{background:var(--card);border-radius:var(--r-lg);padding:14px 16px;display:flex;align-items:flex-start;gap:12px;margin-bottom:8px;box-shadow:var(--shadow);transition:box-shadow .15s;animation:up .18s ease}
-.fc:hover{box-shadow:var(--shadow-md)}
-.fc.done{opacity:.38}
-.fc.done .fc-title{text-decoration:line-through;color:var(--muted)}
-.fc-chk{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center}
-.fc-chk.done{background:rgba(48,209,88,.12);border-color:var(--sage)}
-.fc-chk.done::after{content:'✓';color:var(--sage);font-size:11px;font-weight:700}
-.fc-body{flex:1;min-width:0}
-.fc-title{font-size:.91rem;font-weight:500;margin-bottom:5px;line-height:1.35}
-.fc-meta{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
-.fc-date{font-size:.73rem;color:var(--muted)}
-.fc-date.ov{color:var(--rose);font-weight:600}
-.fc-date.td{color:var(--amber);font-weight:600}
+/* comments */
+.comments-section{margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.comment-lbl{font-size:.69rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.comment{background:var(--bg);border-radius:10px;padding:9px 12px;margin-bottom:6px;font-size:.83rem;line-height:1.45}
+.comment-meta{font-size:.69rem;color:var(--muted);margin-bottom:3px;display:flex;align-items:center;justify-content:space-between}
+.comment-author{font-weight:600;color:var(--sky)}
+.comment-del{background:none;border:none;cursor:pointer;color:var(--muted);font-size:.8rem;padding:0;transition:color .15s}
+.comment-del:hover{color:var(--rose)}
+.comment-input-row{display:flex;gap:8px;margin-top:8px}
+.comment-input-row input{flex:1;font-size:.83rem;padding:8px 12px;border-radius:10px}
+.comment-send{background:var(--sky);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:.78rem;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap;transition:opacity .15s}
+.comment-send:hover{opacity:.85}
 
-/* progress fill colors */
-.fill-0{background:var(--card3)}
-.fill-lo{background:rgba(255,159,10,.5)}
-.fill-mi{background:var(--amber)}
-.fill-hi{background:var(--sage)}
-.fill-dn{background:var(--sage)}
+/* fill colors */
+.fill-0{background:var(--card3)}.fill-lo{background:rgba(255,159,10,.5)}.fill-mi{background:var(--amber)}.fill-hi{background:var(--sage)}.fill-dn{background:var(--sage)}
 
 /* no data / loading */
 .nd{text-align:center;padding:72px 20px;color:var(--muted)}
@@ -111,9 +115,15 @@ h1 span{font-weight:300;color:var(--muted)}
 .spin{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--sky);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 14px}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* done divider */
+/* toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(28,28,30,.88);backdrop-filter:blur(16px);color:#fff;padding:10px 22px;border-radius:100px;font-size:.83rem;font-weight:500;opacity:0;pointer-events:none;transition:opacity .22s;z-index:9999;white-space:nowrap}
+.toast.show{opacity:1}
+
 .ddiv{font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:16px 0 8px;display:flex;align-items:center;gap:8px}
 .ddiv::after{content:'';flex:1;height:1px;background:var(--border)}
+.sec-hd{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.sec-title{font-size:1.05rem;font-weight:600}
+.sec-n{font-size:.75rem;font-weight:600;background:var(--card3);border-radius:100px;padding:2px 9px;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -121,27 +131,62 @@ h1 span{font-weight:300;color:var(--muted)}
   <div class="hd">
     <div class="hd-row">
       <h1 id="title">Dashboard <span>—</span></h1>
-      <button class="ref-btn" onclick="load()">↻ Obnovit</button>
+      <div class="hd-btns">
+        <button class="add-proj-btn" onclick="toggleAddProj()">＋ Projekt</button>
+        <button class="ref-btn" onclick="load()">↻ Obnovit</button>
+      </div>
     </div>
     <div class="hd-meta"><span id="upd">Načítám…</span><span id="own"></span></div>
   </div>
+
+  <!-- add project panel -->
+  <div class="add-panel" id="AP">
+    <div class="ap-title">Nový projekt</div>
+    <div class="fg fg2">
+      <div class="f"><label>Název projektu</label><input type="text" id="pN" placeholder="Název…"></div>
+      <div class="f"><label>Termín</label><input type="date" id="pD"></div>
+    </div>
+    <div class="fg fg2">
+      <div class="f"><label>Stav</label>
+        <select id="pS"><option value="active">▶ Aktivní</option><option value="paused">⏸ Pozastaveno</option><option value="done">✅ Dokončeno</option></select>
+      </div>
+      <div class="f"><label>Přiřadit k</label>
+        <select id="pOwner"><option value="katka">Katka</option><option value="jan">Jan</option></select>
+      </div>
+    </div>
+    <div class="fg" style="grid-template-columns:1fr">
+      <div class="f"><label>Poznámka</label><textarea id="pNote" placeholder="Kontext, požadavky…"></textarea></div>
+    </div>
+    <div class="ap-ft">
+      <button class="btn btn-g" onclick="toggleAddProj()">Zrušit</button>
+      <button class="btn btn-p" onclick="saveNewProj()">Přidat projekt</button>
+    </div>
+  </div>
+
   <div class="summary" id="sum"></div>
   <div id="content"><div class="ld"><div class="spin"></div>Načítám…</div></div>
 </div>
+<div class="toast" id="toast"></div>
+
 <script>
-const vid=location.hash.replace('#','')||null;
+const vid=location.hash.replace('#','')||'alex';
 const openB=new Set();
+let currentData=null;
+let alexComments={};
 
 const SB_URL='https://hkymvggbivowecordrfp.supabase.co';
 const SB_KEY='sb_publishable_X8386tw08HixvSiv0qartQ_bDwcb4vd';
 
-async function sbGetShared(uid){
+async function sbGet(uid){
   try{
-    const r=await fetch(`${SB_URL}/rest/v1/tasks?user_id=eq.shared_${uid}&order=updated_at.desc&limit=1`,{headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}});
-    if(!r.ok)return null;
-    const d=await r.json();
-    return d.length?JSON.parse(d[0].data):null;
+    const r=await fetch(`${SB_URL}/rest/v1/tasks?user_id=eq.${uid}&order=updated_at.desc&limit=1`,{headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}});
+    if(!r.ok)return null;const d=await r.json();return d.length?JSON.parse(d[0].data):null;
   }catch{return null}
+}
+async function sbSave(uid,data){
+  try{
+    await fetch(`${SB_URL}/rest/v1/tasks`,{method:'POST',headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},body:JSON.stringify({user_id:uid,data:JSON.stringify(data),updated_at:new Date().toISOString()})});
+  }catch(e){console.warn('save failed',e)}
 }
 
 function ds(d){if(!d)return null;const t=new Date();t.setHours(0,0,0,0);const dt=new Date(d);dt.setHours(0,0,0,0);return dt<t?'ov':dt.getTime()===t.getTime()?'td':'fut'}
@@ -154,34 +199,29 @@ function fd(d){
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function pct(tasks){if(!tasks||!tasks.length)return 0;return Math.round(tasks.filter(t=>t.done).length/tasks.length*100)}
 function fc(p){return p===100?'fill-dn':p>=60?'fill-hi':p>=30?'fill-mi':p>0?'fill-lo':'fill-0'}
-function pc(p){return p==='high'?'var(--rose)':p==='mid'?'var(--amber)':'var(--sage)'}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400)}
 
 async function load(){
   document.getElementById('upd').textContent='Načítám…';
-  let data=null;
-  // try Supabase first
-  if(vid) data=await sbGetShared(vid);
-  // fallback to localStorage
-  if(!data){
-    if(vid){try{const r=localStorage.getItem('shared_'+vid);if(r)data=JSON.parse(r)}catch{}}
-    if(!data){for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('shared_')){try{data=JSON.parse(localStorage.getItem(k));break}catch{}}}}
-  }
+  let data=await sbGet('shared_'+vid);
+  if(!data){try{const r=localStorage.getItem('shared_'+vid);if(r)data=JSON.parse(r)}catch{}}
   if(!data){noData();return}
+  currentData=data;
+  // load alex comments
+  const ac=await sbGet('alex_comments');
+  if(ac)alexComments=ac;
   render(data);
 }
 
 function noData(){
   document.getElementById('title').innerHTML='Dashboard <span>—</span>';
-  document.getElementById('content').innerHTML=`<div class="nd"><span class="nd-ico">📭</span><p style="font-size:.9rem;font-weight:500">Data zatím nejsou k dispozici.</p><p style="font-size:.8rem;margin-top:6px">Zkontroluj odkaz nebo požádej o aktualizaci.</p></div>`;
+  document.getElementById('content').innerHTML=`<div class="nd"><span class="nd-ico">📭</span><p style="font-size:.9rem;font-weight:500">Data zatím nejsou k dispozici.</p></div>`;
 }
 
 function render(data){
-  const isAlex=vid==='alex'||(!vid&&data.projMap);
-  const name=isAlex?'Alex':'Rodina';
-  document.getElementById('title').innerHTML=`Přehled <span>— ${name}</span>`;
+  document.getElementById('title').innerHTML=`Přehled <span>— Alex</span>`;
   document.getElementById('upd').textContent='Aktualizováno: '+(data.updatedAt?new Date(data.updatedAt).toLocaleString('cs-CZ'):'—');
   document.getElementById('own').textContent=data.owner?'Sdílí: '+data.owner:'';
-
   const tasks=data.tasks||[];
   const active=tasks.filter(t=>!t.done).length,done=tasks.filter(t=>t.done).length;
   const overdue=tasks.filter(t=>!t.done&&ds(t.date)==='ov').length,today=tasks.filter(t=>!t.done&&ds(t.date)==='td').length;
@@ -191,73 +231,124 @@ function render(data){
     <div class="sum s3"><div class="sum-n">${today}</div><div class="sum-l">Dnes</div></div>
     <div class="sum s4"><div class="sum-n">${overdue}</div><div class="sum-l">Po termínu</div></div>
   `;
-  if(isAlex)renderAlex(data);else renderFamily(data);
+  renderAlex(data);
 }
 
 function renderAlex(data){
   const tasks=data.tasks||[],projects=data.projects||[];
+  // also show alex-added projects
+  const alexProjs=alexComments.projects||[];
+  const allProjects=[...projects,...alexProjs.filter(ap=>!projects.find(p=>p.id===ap.id))];
   let html='';
-  projects.forEach(p=>{
+  allProjects.forEach(p=>{
     const pt=(data.projMap&&data.projMap[p.id])||tasks.filter(t=>t.projId===p.id);
-    if(!pt.length)return;
     const pp=pct(pt),isO=openB.has(p.id);
+    const comments=(alexComments.comments||{})[p.id]||[];
     const rows=pt.map(t=>{
       const s=ds(t.date),dc=s==='ov'?' ov':s==='td'?' td':'';
       return`<div class="tr"><div class="tr-chk${t.done?' done':''}"></div><span class="tr-name${t.done?' done':''}">${esc(t.title)}</span><span class="chip c-${t.prio}">${t.prio==='high'?'Vysoká':t.prio==='mid'?'Střední':'Nízká'}</span>${t.date?`<span class="tr-date${dc}">${fd(t.date)}</span>`:''}</div>`;
     }).join('');
+    const commentsHtml=comments.map((c,i)=>`
+      <div class="comment">
+        <div class="comment-meta">
+          <span class="comment-author">Alex</span>
+          <span style="display:flex;align-items:center;gap:6px">
+            <span>${new Date(c.ts).toLocaleDateString('cs-CZ',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</span>
+            <button class="comment-del" onclick="delComment('${p.id}',${i})">×</button>
+          </span>
+        </div>
+        <div>${esc(c.text)}</div>
+      </div>`).join('');
     html+=`<div class="pb" data-pid="${p.id}">
       <div class="pb-head" onclick="togB('${p.id}')">
         <div class="pb-bar" style="background:${pp===100?'var(--sage)':pp>=50?'var(--amber)':'var(--sky)'}"></div>
-        <div class="pb-info"><div class="pb-name">${esc(p.name)}</div><div class="pb-sub">${pt.filter(t=>!t.done).length} zbývá · ${pt.filter(t=>t.done).length} splněno</div></div>
+        <div class="pb-info">
+          <div class="pb-name">${esc(p.name)}${p.alexAdded?'<span style="font-size:.68rem;background:rgba(10,132,255,.1);color:var(--sky);border-radius:6px;padding:1px 6px;margin-left:6px">Alex</span>':''}</div>
+          <div class="pb-sub">${pt.length?`${pt.filter(t=>!t.done).length} zbývá · ${pt.filter(t=>t.done).length} splněno`:'Bez úkolů'}${comments.length?` · 💬 ${comments.length}`:''}</div>
+        </div>
         <div class="pb-pct" style="color:${pp===100?'var(--sage)':pp>=50?'var(--amber)':'var(--ink)'}">${pp}%</div>
         <div class="chev">${isO?'▲':'▼'}</div>
       </div>
       <div class="prog"><div class="prog-track"><div class="prog-fill ${fc(pp)}" style="width:${pp}%"></div></div></div>
-      <div class="pb-body${isO?' open':''}"><div class="sub-lbl">Úkoly</div>${rows}</div>
+      <div class="pb-body${isO?' open':''}">
+        ${pt.length?`<div class="sub-lbl">Úkoly</div><div>${rows}</div>`:'<div style="font-size:.82rem;color:var(--muted);margin-bottom:10px">Zatím žádné úkoly.</div>'}
+        <div class="comments-section">
+          <div class="comment-lbl">Komentáře ${comments.length?`(${comments.length})`:''}</div>
+          ${commentsHtml}
+          <div class="comment-input-row">
+            <input type="text" id="ci_${p.id}" placeholder="Přidat komentář…" onkeydown="if(event.key==='Enter')addComment('${p.id}')">
+            <button class="comment-send" onclick="addComment('${p.id}')">Odeslat</button>
+          </div>
+        </div>
+      </div>
     </div>`;
   });
   const loose=(data.projMap&&data.projMap['__none__'])||tasks.filter(t=>!t.projId);
   if(loose.length){
-    html+=`<div class="sec"><div class="sec-hd"><div class="sec-title" style="font-size:.95rem">Ostatní</div><span class="sec-n">${loose.length}</span></div>`;
-    html+=`<div style="background:var(--card);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden;padding:0 16px">`;
-    html+=loose.map(t=>{const s=ds(t.date),dc=s==='ov'?' ov':s==='td'?' td':'';return`<div class="tr"><div class="tr-chk${t.done?' done':''}"></div><span class="tr-name${t.done?' done':''}">${esc(t.title)}</span><span class="chip c-${t.prio}">${t.prio==='high'?'Vysoká':t.prio==='mid'?'Střední':'Nízká'}</span>${t.date?`<span class="tr-date${dc}">${fd(t.date)}</span>`:''}</div>`;}).join('');
-    html+=`</div></div>`;
+    const lComments=(alexComments.comments||{})['__loose__']||[];
+    const lCommHtml=lComments.map((c,i)=>`<div class="comment"><div class="comment-meta"><span class="comment-author">Alex</span><span style="display:flex;align-items:center;gap:6px"><span>${new Date(c.ts).toLocaleDateString('cs-CZ',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</span><button class="comment-del" onclick="delComment('__loose__',${i})">×</button></span></div><div>${esc(c.text)}</div></div>`).join('');
+    html+=`<div style="background:var(--card);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden;margin-bottom:10px">
+      <div style="padding:14px 18px 10px;font-size:.95rem;font-weight:600">Ostatní úkoly</div>
+      <div style="padding:0 18px 4px 18px">${loose.map(t=>{const s=ds(t.date),dc=s==='ov'?' ov':s==='td'?' td':'';return`<div class="tr"><div class="tr-chk${t.done?' done':''}"></div><span class="tr-name${t.done?' done':''}">${esc(t.title)}</span><span class="chip c-${t.prio}">${t.prio==='high'?'Vysoká':t.prio==='mid'?'Střední':'Nízká'}</span>${t.date?`<span class="tr-date${dc}">${fd(t.date)}</span>`:''}</div>`;}).join('')}</div>
+      <div style="padding:0 18px 16px 18px">
+        <div class="comments-section">
+          <div class="comment-lbl">Komentáře</div>
+          ${lCommHtml}
+          <div class="comment-input-row">
+            <input type="text" id="ci___loose__" placeholder="Přidat komentář…" onkeydown="if(event.key==='Enter')addComment('__loose__')">
+            <button class="comment-send" onclick="addComment('__loose__')">Odeslat</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
   }
   document.getElementById('content').innerHTML=html||`<div class="nd"><span class="nd-ico">✨</span>Žádné sdílené úkoly.</div>`;
-}
-
-function renderFamily(data){
-  const tasks=data.tasks||[];
-  if(!tasks.length){document.getElementById('content').innerHTML=`<div class="nd"><span class="nd-ico">🌿</span>Žádné sdílené úkoly.</div>`;return}
-  const active=tasks.filter(t=>!t.done),done=tasks.filter(t=>t.done);
-  let h=`<div class="sec"><div class="sec-hd"><div class="sec-title">Úkoly</div><span class="sec-n">${active.length}</span></div>`;
-  h+=active.map(fcard).join('');
-  if(done.length)h+=`<div class="ddiv">Splněno (${done.length})</div>`+done.map(fcard).join('');
-  h+=`</div>`;
-  document.getElementById('content').innerHTML=h;
-}
-
-function fcard(t){
-  const s=ds(t.date),dc=s==='ov'?' ov':s==='td'?' td':'';
-  return`<div class="fc${t.done?' done':''}">
-    <div class="fc-chk${t.done?' done':''}"></div>
-    <div class="fc-body">
-      <div class="fc-title">${esc(t.title)}</div>
-      <div class="fc-meta">
-        <span class="chip c-${t.prio}">${t.prio==='high'?'🔴 Vysoká':t.prio==='mid'?'🟡 Střední':'🟢 Nízká'}</span>
-        ${t.date?`<span class="fc-date${dc}">${fd(t.date)}</span>`:''}
-      </div>
-    </div>
-  </div>`;
 }
 
 function togB(id){
   if(openB.has(id))openB.delete(id);else openB.add(id);
   document.querySelectorAll('.pb').forEach(el=>{
     const pid=el.dataset.pid;
-    el.querySelector('.pb-body').classList.toggle('open',openB.has(pid));
-    el.querySelector('.chev').textContent=openB.has(pid)?'▲':'▼';
+    if(!pid)return;
+    const body=el.querySelector('.pb-body'),chev=el.querySelector('.chev');
+    if(body)body.classList.toggle('open',openB.has(pid));
+    if(chev)chev.textContent=openB.has(pid)?'▲':'▼';
   });
+}
+
+// ── comments ──────────────────────────────────────────────────────────────────
+async function addComment(projId){
+  const inp=document.getElementById('ci_'+projId);if(!inp)return;
+  const text=inp.value.trim();if(!text)return;
+  if(!alexComments.comments)alexComments.comments={};
+  if(!alexComments.comments[projId])alexComments.comments[projId]=[];
+  alexComments.comments[projId].push({text,ts:Date.now()});
+  inp.value='';
+  await sbSave('alex_comments',alexComments);
+  if(currentData)render(currentData);
+  toast('💬 Komentář přidán');
+}
+
+async function delComment(projId,idx){
+  if(!alexComments.comments||!alexComments.comments[projId])return;
+  alexComments.comments[projId].splice(idx,1);
+  await sbSave('alex_comments',alexComments);
+  if(currentData)render(currentData);
+}
+
+// ── add project ───────────────────────────────────────────────────────────────
+function toggleAddProj(){document.getElementById('AP').classList.toggle('open');if(document.getElementById('AP').classList.contains('open'))document.getElementById('pN').focus()}
+
+async function saveNewProj(){
+  const name=document.getElementById('pN').value.trim();if(!name)return;
+  if(!alexComments.projects)alexComments.projects=[];
+  const p={id:'aproj_'+Date.now(),name,status:document.getElementById('pS').value,date:document.getElementById('pD').value,note:document.getElementById('pNote').value.trim(),owner:document.getElementById('pOwner').value,alexAdded:true,created:Date.now()};
+  alexComments.projects.push(p);
+  await sbSave('alex_comments',alexComments);
+  document.getElementById('pN').value='';document.getElementById('pD').value='';document.getElementById('pNote').value='';
+  document.getElementById('AP').classList.remove('open');
+  if(currentData)render(currentData);
+  toast('📁 Projekt přidán');
 }
 
 setInterval(load,30000);
