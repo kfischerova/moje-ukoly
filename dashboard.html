@@ -290,7 +290,7 @@ function renderAlex(data){
       <div class="pb-head" onclick="togB('${p.id}')">
         <div class="pb-bar" style="background:${pp===100?'var(--sage)':pp>=50?'var(--amber)':'var(--sky)'}"></div>
         <div class="pb-info">
-          <div class="pb-name">${esc(p.name)}${p.alexAdded?'<span style="font-size:.68rem;background:rgba(10,132,255,.1);color:var(--sky);border-radius:6px;padding:1px 6px;margin-left:6px">Alex</span>':''}</div>
+          <div class="pb-name">${esc(p.name)}${p.alexAdded?`<span style="font-size:.68rem;background:rgba(10,132,255,.1);color:var(--sky);border-radius:6px;padding:1px 6px;margin-left:6px">Alex</span><button onclick="delAlexProj('${p.id}')" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:.8rem;padding:0 0 0 4px;line-height:1;vertical-align:middle" title="Smazat">×</button>`:''}</div>
           <div class="pb-sub">${pt.length?`${pt.filter(t=>!t.done).length} zbývá · ${pt.filter(t=>t.done).length} splněno`:'Bez úkolů'}${comments.length?` · 💬 ${comments.length}`:''}</div>
         </div>
         <div class="pb-pct" style="color:${pp===100?'var(--sage)':pp>=50?'var(--amber)':'var(--ink)'}">${pp}%</div>
@@ -393,6 +393,14 @@ async function addReply(projId,idx){
 }
 
 // ── add project ───────────────────────────────────────────────────────────────
+async function delAlexProj(id){
+  if(!alexComments.projects)return;
+  alexComments.projects=alexComments.projects.filter(p=>p.id!==id);
+  await sbSave('alex_comments',alexComments);
+  if(currentData)render(currentData);
+  toast('🗑 Projekt smazán');
+}
+
 function toggleAddProj(){document.getElementById('AP').classList.toggle('open');if(document.getElementById('AP').classList.contains('open'))document.getElementById('pN').focus()}
 
 async function saveNewProj(){
