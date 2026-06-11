@@ -149,6 +149,9 @@ input:focus,select:focus{border-color:var(--prace);box-shadow:0 0 0 3px rgba(10,
 .proj-card:hover .proj-actions{opacity:1}
 .pabtn{background:none;border:none;cursor:pointer;color:var(--muted);font-size:.88rem;padding:2px 5px;transition:color .15s;line-height:1}
 .pabtn:hover{color:var(--high)}
+.pabtn-archive{background:none;border:none;cursor:pointer;color:var(--muted);font-size:.88rem;padding:2px 5px;transition:color .15s;line-height:1}
+.pabtn-archive:hover{color:var(--mid)}
+.chip-status-archived{background:rgba(142,142,147,.1);color:var(--muted)}
 .chip-status-active{background:rgba(10,132,255,.1);color:var(--prace)}
 .chip-status-paused{background:rgba(142,142,147,.1);color:var(--muted)}
 .chip-status-done{background:rgba(48,209,88,.1);color:var(--rodina)}
@@ -362,12 +365,20 @@ async function loadFromCloud(){
   if(data){
     if(data.tasks){tasks=data.tasks;localStorage.setItem(SK,JSON.stringify(tasks));}
     if(data.projects){projects=data.projects;localStorage.setItem(SKP,JSON.stringify(projects));}
-    setSyncStatus('ok');
   } else {
-    // fallback to localStorage
     lT();lP();
-    setSyncStatus('offline');
   }
+  // load Alex-added projects and merge
+  const alexData=await sbGet('alex_comments');
+  if(alexData&&alexData.projects){
+    alexData.projects.forEach(ap=>{
+      if(!projects.find(p=>p.id===ap.id)){
+        projects.push({...ap,fromAlex:true});
+      }
+    });
+  }
+  setSyncStatus('ok');
+  ppS();
   render();
 }
 
@@ -472,13 +483,20 @@ function getPct(projId){
 function renderProjects(){
   const c=document.getElementById('TL');
   if(!projects.length){c.innerHTML='<div class="empty"><span class="empty-ico">📁</span>Zatím žádné projekty.</div>';return}
-  const active=projects.filter(p=>p.status!=='done'),done=projects.filter(p=>p.status==='done');
+  const active=projects.filter(p=>p.status!=='done'&&p.status!=='archived');
+  const done=projects.filter(p=>p.status==='done');
+  const archived=projects.filter(p=>p.status==='archived');
   let h='<div class="proj-grid">';
   active.forEach(p=>h+=renderProjCard(p));
   h+='</div>';
   if(done.length){
     h+=`<div class="done-div">Dokončeno (${done.length})</div><div class="proj-grid">`;
     done.forEach(p=>h+=renderProjCard(p));
+    h+='</div>';
+  }
+  if(archived.length){
+    h+=`<div class="done-div">Archivováno (${archived.length})</div><div class="proj-grid">`;
+    archived.forEach(p=>h+=renderProjCard(p));
     h+='</div>';
   }
   c.innerHTML=h;
@@ -489,12 +507,13 @@ function renderProjCard(p){
   const taskCount=tasks.filter(t=>t.projId===p.id&&!t.done).length;
   const fillColor=pct===100?'var(--rodina)':pct>=50?'var(--mid)':'var(--prace)';
   const ds2=ds(p.date),dc=ds2==='ov'?' ov':ds2==='td'?' td':'';
-  return`<div class="proj-card">
+  const isArchived=p.status==='archived';
+  return`<div class="proj-card"${isArchived?' style="opacity:.55"':''}>
     <div class="proj-card-top">
       <div class="proj-card-info">
-        <div class="proj-card-name">${esc(p.name)}</div>
+        <div class="proj-card-name">${esc(p.name)}${p.fromAlex?'<span style="font-size:.68rem;background:rgba(10,132,255,.1);color:var(--prace);border-radius:6px;padding:1px 6px;margin-left:6px">👔 Alex</span>':''}</div>
         <div class="proj-card-meta">
-          <span class="chip chip-status-${p.status}">${statusL[p.status]||'Aktivní'}</span>
+          <span class="chip chip-status-${p.status||'active'}">${p.status==='archived'?'📦 Archivováno':p.status==='done'?'✅ Dokončeno':p.status==='paused'?'⏸ Pozastaveno':'▶ Aktivní'}</span>
           ${p.vis==='alex'?'<span class="chip c-share">🔗 Alex</span>':'<span class="chip c-priv">🔒 Soukromý</span>'}
           ${p.date?`<span class="tdate${dc}">${fd(p.date)}</span>`:''}
           ${taskCount>0?`<span class="chip c-prace">${taskCount} úkolů</span>`:''}
@@ -502,6 +521,10 @@ function renderProjCard(p){
         ${p.note?`<div class="proj-card-note">${esc(p.note)}</div>`:''}
       </div>
       <div class="proj-actions">
+        ${!isArchived
+          ?`<button class="pabtn-archive" onclick="archiveProj('${p.id}')" title="Archivovat">📦</button>`
+          :`<button class="pabtn-archive" onclick="unarchiveProj('${p.id}')" title="Obnovit">↩</button>`
+        }
         <button class="pabtn" onclick="delProj('${p.id}')" title="Smazat">×</button>
       </div>
     </div>
@@ -587,6 +610,14 @@ function addProject(){
   document.getElementById('pN').value='';document.getElementById('pD').value='';document.getElementById('pNote').value='';
   document.getElementById('APP').classList.remove('open');render();toast('📁 Projekt přidán');
 }
+function archiveProj(id){
+  const p=projects.find(p=>p.id===id);if(!p)return;
+  p.status='archived';sP();ppS();render();toast('📦 Projekt archivován');
+}
+function unarchiveProj(id){
+  const p=projects.find(p=>p.id===id);if(!p)return;
+  p.status='active';sP();ppS();render();toast('↩ Projekt obnoven');
+}
 function delProj(id){projects=projects.filter(p=>p.id!==id);sP();ppS();render();toast('Projekt smazán')}
 
 function onCat(){
@@ -606,7 +637,9 @@ function onProj(){document.getElementById('NPF').style.display=document.getEleme
 
 function ppS(){
   const s=document.getElementById('aPS');
-  s.innerHTML=`<option value="">— bez projektu —</option>`+projects.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')+`<option value="__new__">+ Nový projekt…</option>`;
+  s.innerHTML=`<option value="">— bez projektu —</option>`
+    +projects.map(p=>`<option value="${p.id}">${p.fromAlex?'👔 ':''} ${esc(p.name)}</option>`).join('')
+    +`<option value="__new__">+ Nový projekt…</option>`;
 }
 
 function addTask(){
